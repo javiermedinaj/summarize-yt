@@ -1,0 +1,26 @@
+{
+  "type": "module",
+  "dependencies": {
+    "@azure/ai-form-recognizer": "^5.0.0",
+    "@azure/openai": "^2.0.0-beta.3",
+    "axios": "^1.7.7",
+    "axios-retry": "^4.5.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "form-data": "^4.0.1",
+    "formdata-node": "^6.0.3",
+    "gpt-3-encoder": "^1.1.4",
+    "multer": "^1.4.5-lts.1",
+    "node-fetch": "^3.3.2",
+    "openai": "^4.71.1",
+    "p-limit": "^6.1.0",
+    "pdf-parse": "^1.1.1",
+    "pdf.js-extract": "^0.2.1",
+    "subtitles-parser": "^0.0.2",
+    "ytdl-core": "^4.11.5"
+  },
+  "devDependencies": {
+    "@types/pdf-parse": "^1.1.4"
+  }
+}
