@@ -2,6 +2,8 @@
 
 A web application that leverages AI to generate concise summaries of YouTube videos (less than 15 minutes), helping users save time and quickly grasp video content. This is a preliminary version, and future updates may support longer videos as we explore other AI models.
 
+## 📸 Screenshots ### Interface ![Interface](./demo-img/interfaz.png) ### Functionality ![Functionality](./demo-img/funcionamiento.png)
+
 ## 🚀 Features
 
 - YouTube video URL input
