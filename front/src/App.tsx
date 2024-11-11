@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Brain, Download, Loader2, Trash2 } from "lucide-react";
+import { Brain, Loader2 } from "lucide-react";
+import { FaFileExport, FaFilePdf, FaFileWord, FaTrash, FaYoutube } from "react-icons/fa";
 import { FileUpload } from "./components/FileUpload";
 import { Flashcard } from "./components/Flashcard";
 import { extractSummary, extractFlashcards } from "./services/api";
@@ -45,12 +46,40 @@ function App() {
     setError(null);
   };
 
+  const exportToNotion = () => {
+    const content = `# Summary\n${summary}\n\n# Flashcards\n${flashcards
+      .map((card) => `Q: ${card.front}\nA: ${card.back}\n`)
+      .join("\n")}`;
+
+    const blob = new Blob([content], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "summary-flashcards.md";
+    a.click();
+  };
+
+  const exportToDoc = () => {
+    const content = `Summary:\n${summary}\n\nFlashcards:\n${flashcards
+      .map((card) => `Question: ${card.front}\nAnswer: ${card.back}\n`)
+      .join("\n")}`;
+
+    const blob = new Blob([content], { type: "application/msword" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "summary-flashcards.doc";
+    a.click();
+  };
+
   return (
     <div className="min-h-screen gradient-bg">
       <div className="mx-auto px-2 py-10">
         <div className="flex flex-col items-center justify-center mb-12">
           <Brain className="w-10 h-10 text-white" />
-          <h1 className="text-3xl pt-4 font-bold text-white">Summarize Youtube</h1>
+          <h1 className="text-3xl pt-4 font-bold text-white">
+            Summarize Youtube
+          </h1>
         </div>
 
         <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl p-6 sm:p-8">
@@ -64,56 +93,89 @@ function App() {
 
           {videoUrl && (
             <div className="space-y-6">
+        
               <div className="flex flex-col items-center">
                 <div className="w-full aspect-w-16 aspect-h-9">
                   <iframe
                     className="w-full h-full rounded-lg"
-                    src={`https://www.youtube.com/embed/${new URL(
-                      videoUrl
-                    ).searchParams.get("v")}`}
+                    src={`https://www.youtube.com/embed/${new URL(videoUrl).searchParams.get("v")}`}
                     title="Video Preview"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
                   ></iframe>
                 </div>
-                <a
-                  href={videoUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-2 text-indigo-600 hover:underline"
-                >
-                  Watch on YouTube
-                </a>
-              </div>
-
-              <div className="flex flex-col sm:flex-row items-center justify-between bg-gray-50 p-4 rounded-lg">
-                <div className="flex items-center mb-4 sm:mb-0">
-                  <div className="w-10 h-10 bg-slate-200 rounded-lg flex items-center justify-center">
-                    <Brain className="w-6 h-6 text-zinc-900" />
+                
+                {/* URL and controls bar */}
+                <div className="w-full flex items-center justify-between mt-4 p-4 bg-gray-50 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <FaYoutube className="w-5 h-5 text-red-600" />
+                    <a
+                      href={videoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-700 hover:text-gray-900 transition-colors"
+                    >
+                      Watch on YouTube
+                    </a>
                   </div>
-                  <div className="ml-4">
-                    <p className="font-medium text-gray-800 break-all">
-                      {videoUrl}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex space-x-2">
                   <button
-                    className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-800 transition-colors disabled:opacity-50"
-                    onClick={() => toPDF()}
-                    disabled={isGenerating || flashcards.length === 0}
-                  >
-                    <Download className="w-4 h-4 hover:" />
-                  </button>
-                  <button
-                    className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-600 transition-colors"
                     onClick={handleClear}
+                    className="text-red-500 hover:text-red-600 transition-colors"
+                    title="Clear content"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <FaTrash className="w-4 h-4" />
                   </button>
+                </div>
+                
+                <div className="w-full mt-6 flex justify-start gap-3">
+                  <div className="flex items-center gap-3 bg-gray-50 p-2 rounded-lg">
+                    <span className="text-sm text-gray-500 px-2">Export as:</span>
+                    {[
+                      {
+                        title: 'Export to Markdown',
+                        icon: FaFileExport,
+                        label: 'MD',
+                        onClick: exportToNotion,
+                        bgColor: 'bg-purple-100',
+                        textColor: 'text-purple-700',
+                        hoverBg: 'hover:bg-purple-200'
+                      },
+                      {
+                        title: 'Export to Word',
+                        icon: FaFileWord,
+                        label: 'DOC',
+                        onClick: exportToDoc,
+                        bgColor: 'bg-blue-100',
+                        textColor: 'text-blue-700',
+                        hoverBg: 'hover:bg-blue-200'
+                      },
+                      {
+                        title: 'Export to PDF',
+                        icon: FaFilePdf,
+                        label: 'PDF',
+                        onClick: () => toPDF(),
+                        bgColor: 'bg-green-100',
+                        textColor: 'text-green-700',
+                        hoverBg: 'hover:bg-green-200'
+                      }
+                    ].map(({ title, icon: Icon, label, onClick, bgColor, textColor, hoverBg }) => (
+                      <button
+                        key={label}
+                        className={`flex items-center gap-2 px-3 py-1.5 rounded-md transition-colors 
+                          ${bgColor} ${textColor} ${hoverBg} disabled:opacity-50 disabled:cursor-not-allowed`}
+                        onClick={onClick}
+                        disabled={isGenerating || flashcards.length === 0}
+                        title={title}
+                      >
+                        <Icon className="w-4 h-4" />
+                        <span className="text-sm font-medium">{label}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
+          
               {isGenerating ? (
                 <div className="flex flex-col items-center justify-center py-12">
                   <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
@@ -145,7 +207,7 @@ function App() {
         </div>
       </div>
       <p className="text-white text-center py-4">
-        Someone videos can't be proccesed
+        Some videos can't be processed
       </p>
     </div>
   );
