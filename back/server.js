@@ -6,12 +6,21 @@ import flashcardRouter from './routes/flashcards.routes.js';
 const app = express();
 
 app.use(cors({
-    origin: 'http://localhost:5173',
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type']
+    origin: function(origin, callback) {
+        callback(null, true); // Permite cualquier origen por ahora para pruebas
+    },
+    methods: ['GET', 'POST', 'OPTIONS'],
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
 app.use(express.json());
+
+// Ruta de prueba
+app.get('/api/test', (req, res) => {
+    res.json({ message: 'apiworking' });
+});
+
 app.use('/api/video', videoRouter);
 app.use('/api/flashcards', flashcardRouter);
 
