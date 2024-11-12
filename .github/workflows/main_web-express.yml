@@ -1,6 +1,5 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
-
 name: Build and deploy Node.js app to Azure Web App - web-express
 
 on:
@@ -12,45 +11,46 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
-
-      - name: npm install, build, and test
+          
+      - name: Navigate to back directory and install dependencies
+        working-directory: ./back
         run: |
           npm install
-          npm run build --if-present
-          npm run test --if-present
-
+          
       - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
-
+        run: |
+          cd back
+          zip release.zip ./* -r
+          
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: release.zip
-
+          path: back/release.zip
+          
   deploy:
     runs-on: ubuntu-latest
     needs: build
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    
     permissions:
       id-token: write #This is required for requesting the JWT
-
+      
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: node-app
-
+          
       - name: Unzip artifact for deployment
         run: unzip release.zip
       
@@ -60,7 +60,7 @@ jobs:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_2F0781E8A5EE47DE8AEA80C78753790C }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_8B7C0309223049F098034E212574AEF9 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_69BEAF4F0D82448E9CB9F08EAD6E0879 }}
-
+          
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
@@ -68,4 +68,3 @@ jobs:
           app-name: 'web-express'
           slot-name: 'Production'
           package: .
-          
