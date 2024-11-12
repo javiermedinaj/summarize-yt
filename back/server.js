@@ -32,7 +32,9 @@ app.get('/api/test', (req, res) => {
 app.use('/api/video', videoRouter);
 app.use('/api/flashcards', flashcardRouter);
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ error: err.message });
 });
+
+export default app;

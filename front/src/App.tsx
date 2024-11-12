@@ -1,10 +1,37 @@
 import { useState } from "react";
-import { Brain, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { FaFileExport, FaFilePdf, FaFileWord, FaTrash, FaYoutube } from "react-icons/fa";
 import { FileUpload } from "./components/FileUpload";
 import { Flashcard } from "./components/Flashcard";
-import { extractSummary, extractFlashcards } from "./services/api";
 import { usePDF } from "react-to-pdf";
+
+async function extractSummary(videoUrl: string): Promise<{ summary: string }> {
+  const response = await fetch('http://localhost:5000/api/video/extract-summary', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ videoUrl }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+async function extractFlashcards(videoUrl: string): Promise<{ flashcards: Array<{ question: string, answer: string }> }> {
+  const response = await fetch('http://localhost:5000/api/video/extract-subtitles', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ videoUrl }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return response.json();
+}
 
 function App() {
   const [videoUrl, setVideoUrl] = useState("");
@@ -76,7 +103,6 @@ function App() {
     <div className="min-h-screen gradient-bg">
       <div className="mx-auto px-2 py-10">
         <div className="flex flex-col items-center justify-center mb-12">
-          <Brain className="w-10 h-10 text-white" />
           <h1 className="text-3xl pt-4 font-bold text-white">
             Summarize Youtube
           </h1>
@@ -105,7 +131,6 @@ function App() {
                   ></iframe>
                 </div>
                 
-                {/* URL and controls bar */}
                 <div className="w-full flex items-center justify-between mt-4 p-4 bg-gray-50 rounded-lg">
                   <div className="flex items-center gap-2">
                     <FaYoutube className="w-5 h-5 text-red-600" />
@@ -154,9 +179,9 @@ function App() {
                         icon: FaFilePdf,
                         label: 'PDF',
                         onClick: () => toPDF(),
-                        bgColor: 'bg-green-100',
-                        textColor: 'text-green-700',
-                        hoverBg: 'hover:bg-green-200'
+                        bgColor: 'bg-red-200',
+                        textColor: 'text-white-700',
+                        hoverBg: 'hover:bg-red-400'
                       }
                     ].map(({ title, icon: Icon, label, onClick, bgColor, textColor, hoverBg }) => (
                       <button
