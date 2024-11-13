@@ -21,14 +21,15 @@ jobs:
         with:
           node-version: '20.x'
 
-      - name: npm install, build, and test
+      - name: Install dependencies and build in 'back' folder
+        working-directory: ./back
         run: |
           npm install
           npm run build --if-present
           npm run test --if-present
 
       - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+        run: zip release.zip ./back/* -r
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -53,7 +54,7 @@ jobs:
 
       - name: Unzip artifact for deployment
         run: unzip release.zip
-      
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -67,5 +68,4 @@ jobs:
         with:
           app-name: 'flashcards'
           slot-name: 'Production'
-          package: .
-          
+          package: ./back
