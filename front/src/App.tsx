@@ -6,7 +6,7 @@ import { Flashcard } from "./components/Flashcard";
 import { usePDF } from "react-to-pdf";
 
 async function extractSummary(videoUrl: string): Promise<{ summary: string }> {
-  const response = await fetch('http://localhost:5000/api/video/extract-summary', {
+  const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/video/extract-summary`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ videoUrl }),
@@ -20,7 +20,7 @@ async function extractSummary(videoUrl: string): Promise<{ summary: string }> {
 }
 
 async function extractFlashcards(videoUrl: string): Promise<{ flashcards: Array<{ question: string, answer: string }> }> {
-  const response = await fetch('http://localhost:5000/api/video/extract-subtitles', {
+  const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/video/extract-subtitles`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ videoUrl }),
