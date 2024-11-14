@@ -1,26 +1,11 @@
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
-import { FaFileExport, FaFilePdf, FaFileWord, FaTrash, FaYoutube } from "react-icons/fa";
+import { FaFileExport, FaFilePdf, FaTrash, FaYoutube } from "react-icons/fa";
 import { FileUpload } from "./components/FileUpload";
-import { Flashcard } from "./components/Flashcard";
 import { usePDF } from "react-to-pdf";
 
 async function extractSummary(videoUrl: string): Promise<{ summary: string }> {
-  const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/video/extract-summary`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ videoUrl }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-
-  return response.json();
-}
-
-async function extractFlashcards(videoUrl: string): Promise<{ flashcards: Array<{ question: string, answer: string }> }> {
-  const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/video/extract-subtitles`, {
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ videoUrl }),
@@ -36,12 +21,9 @@ async function extractFlashcards(videoUrl: string): Promise<{ flashcards: Array<
 function App() {
   const [videoUrl, setVideoUrl] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [flashcards, setFlashcards] = useState<
-    Array<{ front: string; back: string }>
-  >([]);
   const [summary, setSummary] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
-  const { toPDF, targetRef } = usePDF({ filename: "flashcards.pdf" });
+  const { toPDF, targetRef } = usePDF({ filename: "summary.pdf" });
 
   const handleUrlSubmit = async (url: string) => {
     setVideoUrl(url);
@@ -51,15 +33,8 @@ function App() {
     try {
       const summaryData = await extractSummary(url);
       setSummary(summaryData.summary);
-
-      const flashcardsData = await extractFlashcards(url);
-      const formattedCards = flashcardsData.flashcards.map((card) => ({
-        front: card.question,
-        back: card.answer,
-      }));
-      setFlashcards(formattedCards);
     } catch (err) {
-      setError("Failed to generate summary and flashcards. Please try again.");
+      setError("Failed to generate summary. Please try again.");
       console.error(err);
     } finally {
       setIsGenerating(false);
@@ -69,33 +44,16 @@ function App() {
   const handleClear = () => {
     setVideoUrl("");
     setSummary("");
-    setFlashcards([]);
     setError(null);
   };
 
-  const exportToNotion = () => {
-    const content = `# Summary\n${summary}\n\n# Flashcards\n${flashcards
-      .map((card) => `Q: ${card.front}\nA: ${card.back}\n`)
-      .join("\n")}`;
-
+  const exportToMarkdown = () => {
+    const content = `# Summary\n${summary}`;
     const blob = new Blob([content], { type: "text/markdown" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "summary-flashcards.md";
-    a.click();
-  };
-
-  const exportToDoc = () => {
-    const content = `Summary:\n${summary}\n\nFlashcards:\n${flashcards
-      .map((card) => `Question: ${card.front}\nAnswer: ${card.back}\n`)
-      .join("\n")}`;
-
-    const blob = new Blob([content], { type: "application/msword" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "summary-flashcards.doc";
+    a.download = "summary.md";
     a.click();
   };
 
@@ -119,7 +77,6 @@ function App() {
 
           {videoUrl && (
             <div className="space-y-6">
-        
               <div className="flex flex-col items-center">
                 <div className="w-full aspect-w-16 aspect-h-9">
                   <iframe
@@ -160,19 +117,10 @@ function App() {
                         title: 'Export to Markdown',
                         icon: FaFileExport,
                         label: 'MD',
-                        onClick: exportToNotion,
+                        onClick: exportToMarkdown,
                         bgColor: 'bg-purple-100',
                         textColor: 'text-purple-700',
                         hoverBg: 'hover:bg-purple-200'
-                      },
-                      {
-                        title: 'Export to Word',
-                        icon: FaFileWord,
-                        label: 'DOC',
-                        onClick: exportToDoc,
-                        bgColor: 'bg-blue-100',
-                        textColor: 'text-blue-700',
-                        hoverBg: 'hover:bg-blue-200'
                       },
                       {
                         title: 'Export to PDF',
@@ -189,7 +137,7 @@ function App() {
                         className={`flex items-center gap-2 px-3 py-1.5 rounded-md transition-colors 
                           ${bgColor} ${textColor} ${hoverBg} disabled:opacity-50 disabled:cursor-not-allowed`}
                         onClick={onClick}
-                        disabled={isGenerating || flashcards.length === 0}
+                        disabled={isGenerating || !summary}
                         title={title}
                       >
                         <Icon className="w-4 h-4" />
@@ -200,12 +148,11 @@ function App() {
                 </div>
               </div>
 
-          
               {isGenerating ? (
                 <div className="flex flex-col items-center justify-center py-12">
                   <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
                   <p className="mt-4 text-gray-600">
-                    Generating your summary and flashcards...
+                    Generating your summary...
                   </p>
                 </div>
               ) : (
@@ -218,13 +165,6 @@ function App() {
                       <p className="text-gray-700">{summary}</p>
                     </div>
                   )}
-                  {flashcards.map((card, index) => (
-                    <Flashcard
-                      key={index}
-                      front={card.front}
-                      back={card.back}
-                    />
-                  ))}
                 </div>
               )}
             </div>

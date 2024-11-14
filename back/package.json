@@ -17,6 +17,7 @@
     "nodemon": "^3.1.7",
     "openai": "^4.71.1",
     "pdf.js-extract": "^0.2.1",
+    "puppeteer": "^23.8.0",
     "ytdl-core": "^4.11.5"
   },
   "devDependencies": {

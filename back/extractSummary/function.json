@@ -1,0 +1,17 @@
+{
+  "bindings": [
+    {
+      "authLevel": "anonymous",
+      "type": "HttpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": ["POST", "OPTIONS"],
+      "route": "video/extract-summary"
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    }
+  ]
+}
