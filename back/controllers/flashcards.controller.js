@@ -1,4 +1,3 @@
-// controllers/flashcards.controller.js
 import { generateFlashcardsFromText, summarizeText } from '../services/openai.service.js';
 import { extractTextFromPDF } from '../services/pdf.service.js';
 import { getVideoSubtitles } from '../services/subtitle.service.js';

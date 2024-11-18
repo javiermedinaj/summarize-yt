@@ -1,4 +1,3 @@
-// services/subtitle.service.js
 import puppeteer from 'puppeteer';
 import fs from 'fs/promises';
 import path from 'path';
@@ -47,11 +46,9 @@ export async function getVideoSubtitles(videoUrl) {
         await page.waitForSelector('button[type="submit"]');
         await page.click('button[type="submit"]');
         
-        // Wait longer for English subtitles to appear
         await page.waitForSelector('[data-title="[TXT] English"]', { timeout: 10000 });
         await page.click('[data-title="[TXT] English"]');
 
-        // Wait for download
         await new Promise(r => setTimeout(r, 3000));
 
         const files = await fs.readdir(tempDir);
@@ -73,7 +70,6 @@ export async function getVideoSubtitles(videoUrl) {
         throw new Error(`Failed to download subtitles: ${error.message}`);
     } finally {
         if (browser) await browser.close();
-        // Clean up temp directory
         await fs.rm(tempDir, { recursive: true, force: true }).catch(console.error);
     }
 }

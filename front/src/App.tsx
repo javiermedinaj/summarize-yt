@@ -5,7 +5,7 @@ import { FileUpload } from "./components/FileUpload";
 import { usePDF } from "react-to-pdf";
 
 async function extractSummary(videoUrl: string): Promise<{ summary: string }> {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}`, {
+  const response = await fetch('http://localhost:5000/api/video/extract-summary', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ videoUrl }),
