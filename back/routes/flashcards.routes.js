@@ -1,20 +1,29 @@
 import express from 'express';
-import multer from 'multer';
-import { handlePDFFlashcards } from '../controllers/flashcards.controller.js';
+import Joi from 'joi';
+import { handleTextFlashcards } from '../controllers/flashcards.controller.js';
 
 const router = express.Router();
-const upload = multer();
 
-router.post('/generate-flashcards', upload.single('file'), async (req, res) => {
+const textSchema = Joi.object({
+    text: Joi.string().min(10).required()
+});
+
+router.post('/generate', async (req, res) => {
     try {
-        if (!req.file) {
-            return res.status(400).json({ error: 'No file provided' });
+        const { error } = textSchema.validate(req.body);
+        if (error) {
+            return res.status(400).json({ error: error.details[0].message });
         }
-        const flashcards = await handlePDFFlashcards(req.file);
-        res.json(flashcards);
+
+        const { text } = req.body;
+        const result = await handleTextFlashcards(text);
+        
+        res.json(result);
     } catch (error) {
         console.error('Error generating flashcards:', error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ 
+            error: error.message || 'Failed to generate flashcards'
+        });
     }
 });
 

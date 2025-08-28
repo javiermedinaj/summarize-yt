@@ -33,4 +33,27 @@ router.post('/extract-summary', async (req, res, next) => {
     }
 });
 
+router.post('/extract-subtitles', async (req, res, next) => {
+    try {
+        const { error } = videoUrlSchema.validate(req.body);
+        if (error) {
+            return res.status(400).json({ error: error.details[0].message });
+        }
+
+        const { videoUrl } = req.body;
+        const subtitles = await getVideoSubtitles(videoUrl);
+        
+        res.json({
+            success: true,
+            subtitles: subtitles.text,
+            videoId: subtitles.videoId
+        });
+    } catch (error) {
+        console.error('Route error:', error);
+        res.status(500).json({ 
+            error: error.message || 'Failed to extract subtitles'
+        });
+    }
+});
+
 export default router;

@@ -1,7 +1,5 @@
-import puppeteer from 'puppeteer';
-import fs from 'fs/promises';
-import path from 'path';
-import os from 'os';
+import fetch from 'node-fetch';
+import { URL } from 'url';
 
 function extractVideoId(url) {
     try {
@@ -15,50 +13,114 @@ function extractVideoId(url) {
     }
 }
 
+async function getSubtitlesFromYouTubeTranscript(videoUrl) {
+    try {
+        const videoId = extractVideoId(videoUrl);
+        const transcriptUrl = `https://youtubetotranscript.com/transcript?v=${videoId}`;
+        
+        console.log(`🔍 Navegando a: ${transcriptUrl}`);
+        
+        const response = await fetch(transcriptUrl, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                'Accept-Language': 'en-US,en;q=0.5',
+                'Accept-Encoding': 'gzip, deflate',
+                'Connection': 'keep-alive',
+                'Upgrade-Insecure-Requests': '1'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch transcript page: ${response.status}`);
+        }
+
+        const html = await response.text();
+        
+        console.log(`📄 HTML obtenido, longitud: ${html.length} caracteres`);
+        
+        const segmentMatches = html.match(/<span[^>]*class="[^"]*transcript-segment[^"]*"[^>]*>([^<]*)<\/span>/gi);
+        
+        if (segmentMatches && segmentMatches.length > 0) {
+            console.log(`✅ Encontrados ${segmentMatches.length} segmentos de transcript`);
+            
+            const transcriptTexts = segmentMatches.map(match => {
+                const textMatch = match.match(/>([^<]*)</);
+                return textMatch ? textMatch[1].trim() : '';
+            }).filter(text => text.length > 0);
+            
+            if (transcriptTexts.length > 0) {
+                const fullTranscript = transcriptTexts.join(' ');
+                console.log(`📝 Transcript extraído: ${fullTranscript.length} caracteres`);
+                return fullTranscript;
+            }
+        }
+        
+        const contentMatch = html.match(/<span[^>]*>([^<]*you are making[^<]*)<\/span>/i);
+        if (contentMatch) {
+            console.log('✅ Encontrado por contenido específico');
+            return cleanTranscriptContent(contentMatch[1]);
+        }
+        
+        const divMatches = html.match(/<div[^>]*>([^<]{200,})<\/div>/g);
+        if (divMatches) {
+            let longestContent = '';
+            for (const match of divMatches) {
+                const content = match.replace(/<[^>]*>/g, '').trim();
+                if (content.length > longestContent.length && content.includes(' ')) {
+                    longestContent = content;
+                }
+            }
+            if (longestContent.length > 100) {
+                console.log('✅ Encontrado por div con más contenido');
+                return cleanTranscriptContent(longestContent);
+            }
+        }
+        
+        throw new Error('No transcript content found on the page');
+        
+    } catch (error) {
+        console.error('Error getting transcript from YouTubeTranscript:', error);
+        throw new Error(`Failed to get transcript: ${error.message}`);
+    }
+}
+
+function cleanTranscriptContent(htmlContent) {
+    let cleaned = htmlContent
+        .replace(/<[^>]*>/g, '') 
+        
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+        .replace(/&#x27;/g, "'")
+        .replace(/&apos;/g, "'")
+        .replace(/\s+/g, ' ')
+        .replace(/Copy Timestamp OFF/g, '')
+        .replace(/Copy Timestamp ON/g, '')
+        .trim();
+    
+    return cleaned;
+}
+
 export async function getVideoSubtitles(videoUrl) {
     const videoId = extractVideoId(videoUrl);
     if (!videoId) {
         throw new Error('Invalid YouTube URL');
     }
 
-    const tempDir = path.join(os.tmpdir(), `yt-subtitles-${videoId}`);
-    const outputDir = path.join(process.cwd(), 'temp-subtitles');
-    let browser;
-
     try {
-        await fs.mkdir(tempDir, { recursive: true });
-        await fs.mkdir(outputDir, { recursive: true });
-
-        browser = await puppeteer.launch({
-            headless: 'new',
-            args: ['--no-sandbox']
-        });
-
-        const page = await browser.newPage();
-        await page._client().send('Page.setDownloadBehavior', {
-            behavior: 'allow',
-            downloadPath: tempDir
-        });
-
-        const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`;
-        await page.goto(`https://downsub.com/?url=${encodeURIComponent(youtubeUrl)}`);
+        console.log(`🎥 Extrayendo subtítulos para video: ${videoId}`);
         
-        await page.waitForSelector('button[type="submit"]');
-        await page.click('button[type="submit"]');
+        const subtitles = await getSubtitlesFromYouTubeTranscript(videoUrl);
         
-        await page.waitForSelector('[data-title="[TXT] English"]', { timeout: 10000 });
-        await page.click('[data-title="[TXT] English"]');
-
-        await new Promise(r => setTimeout(r, 3000));
-
-        const files = await fs.readdir(tempDir);
-        const subtitleFile = files.find(f => f.endsWith('.txt'));
-
-        if (!subtitleFile) {
-            throw new Error('No English subtitles found for this video');
+        if (!subtitles || subtitles.length === 0) {
+            throw new Error('No subtitles found for this video');
         }
-
-        const subtitles = await fs.readFile(path.join(tempDir, subtitleFile), 'utf-8');
+        
+        console.log(`✅ Subtítulos extraídos: ${subtitles.length} caracteres`);
         
         return {
             text: subtitles,
@@ -68,8 +130,5 @@ export async function getVideoSubtitles(videoUrl) {
     } catch (error) {
         console.error('Error downloading subtitles:', error);
         throw new Error(`Failed to download subtitles: ${error.message}`);
-    } finally {
-        if (browser) await browser.close();
-        await fs.rm(tempDir, { recursive: true, force: true }).catch(console.error);
     }
 }

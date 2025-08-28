@@ -1,20 +1,20 @@
-import { generateFlashcardsFromText, summarizeText } from '../services/openai.service.js';
-import { extractTextFromPDF } from '../services/pdf.service.js';
-import { getVideoSubtitles } from '../services/subtitle.service.js';
+import { generateFlashcardsFromText } from '../services/openai.service.js';
+import { saveFlashcards } from '../services/storage.service.js';
 
-export async function handlePDFFlashcards(file) {
-    const text = await extractTextFromPDF(file);
-    const summary = await summarizeText(text.fullText);
-    return generateFlashcardsFromText(summary);
-}
-
-export async function handleVideoFlashcards(videoId) {
+export async function handleTextFlashcards(text) {
     try {
-        const subtitles = await getVideoSubtitles(videoId);
-        const summary = await summarizeText(subtitles);
-        return generateFlashcardsFromText(summary);
+        const flashcards = await generateFlashcardsFromText(text, 5);
+        
+        // Guardar flashcards (usamos un ID temporal ya que no tenemos videoId aquí)
+        const tempId = `flashcards_${Date.now()}`;
+        await saveFlashcards(tempId, flashcards);
+        
+        return {
+            success: true,
+            flashcards: flashcards
+        };
     } catch (error) {
-        console.error('Error processing video flashcards:', error);
-        throw new Error('Failed to generate flashcards from video');
+        console.error('Error generating flashcards:', error);
+        throw new Error('Failed to generate flashcards from text');
     }
 }
