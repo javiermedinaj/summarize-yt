@@ -19,14 +19,7 @@ export const ContentDisplay: React.FC<ContentDisplayProps> = ({
   flashcards,
   prompt
 }) => {
-  console.log('ContentDisplay rendered with:', {
-    activeTab,
-    hasPrompt: !!prompt,
-    promptContent: prompt
-  });
-
   const renderContent = () => {
-    console.log('renderContent called, activeTab:', activeTab);
     switch (activeTab) {
       case 'summary':
         if (summary) {

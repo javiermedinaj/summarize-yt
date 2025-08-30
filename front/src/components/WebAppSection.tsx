@@ -7,11 +7,11 @@ import { ContentDisplay } from './ContentDisplay';
 import { LoadingSpinner } from './LoadingSpinner';
 import { ErrorMessage } from './ErrorMessage';
 import { usePDF } from 'react-to-pdf';
-import { extractSummary, extractSubtitles, generateFlashcards } from '../services/api';
-import { Flashcard } from '../services/types';
+import { extractSummary, generateFlashcards } from '../services/api';
+import { Flashcard, Prompt } from '../services/types';
 import { useState } from 'react';
 
-type TabType = 'summary' | 'subtitles' | 'flashcards';
+type TabType = 'summary' | 'subtitles' | 'flashcards' | 'prompt';
 
 export const WebAppSection: React.FC = () => {
   const [videoUrl, setVideoUrl] = useState("");
@@ -21,6 +21,7 @@ export const WebAppSection: React.FC = () => {
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>('summary');
+  const [prompt, setPrompt] = useState<Prompt | undefined>(undefined);
   const { toPDF, targetRef } = usePDF({ filename: "summary.pdf" });
 
   const handleUrlSubmit = async (url: string) => {
@@ -30,16 +31,28 @@ export const WebAppSection: React.FC = () => {
     setSummary("");
     setSubtitles("");
     setFlashcards([]);
+    setPrompt(undefined);
 
     try {
-      const summaryData = await extractSummary(url);
-      setSummary(summaryData.summary);
-      
-      const subtitlesData = await extractSubtitles(url);
-      setSubtitles(subtitlesData.subtitles);
-      
-      const flashcardsData = await generateFlashcards(summaryData.summary);
-      setFlashcards(flashcardsData.flashcards);
+      const response = await extractSummary(url);
+      console.log('API Response:', response);
+      setSummary(response.summary);
+      setSubtitles(response.subtitles);
+      setPrompt(response.prompt);
+
+      // Generar flashcards en una llamada separada con manejo de errores independiente
+      try {
+        console.log('🔄 Generando flashcards en frontend...');
+        // Pequeño delay para asegurar que el servidor esté listo
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        const flashcardsData = await generateFlashcards(response.summary);
+        console.log('✅ Flashcards recibidas:', flashcardsData);
+        setFlashcards(flashcardsData.flashcards);
+      } catch (flashcardError) {
+        console.error('❌ Error generando flashcards:', flashcardError);
+        // No falla toda la aplicación si las flashcards fallan
+        setFlashcards([]);
+      }
       
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to process video. Please try again.");
@@ -54,6 +67,7 @@ export const WebAppSection: React.FC = () => {
     setSummary("");
     setSubtitles("");
     setFlashcards([]);
+    setPrompt(undefined);
     setError(null);
     setActiveTab('summary');
   };
@@ -124,6 +138,7 @@ export const WebAppSection: React.FC = () => {
                     summary={summary}
                     subtitles={subtitles}
                     flashcards={flashcards}
+                    prompt={prompt}
                   />
                 </div>
               )}

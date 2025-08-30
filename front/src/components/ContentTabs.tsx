@@ -1,7 +1,7 @@
 import React from 'react';
-import { FaFileExport, FaFilePdf, FaLightbulb } from 'react-icons/fa';
+import { FaFileExport, FaFilePdf, FaLightbulb, FaRobot } from 'react-icons/fa';
 
-type TabType = 'summary' | 'subtitles' | 'flashcards';
+type TabType = 'summary' | 'subtitles' | 'flashcards' | 'prompt';
 
 interface ContentTabsProps {
   activeTab: TabType;
@@ -12,7 +12,8 @@ export const ContentTabs: React.FC<ContentTabsProps> = ({ activeTab, onTabChange
   const tabs = [
     { id: 'summary' as TabType, label: 'Summary', icon: FaFileExport },
     { id: 'subtitles' as TabType, label: 'Transcript', icon: FaFilePdf },
-    { id: 'flashcards' as TabType, label: 'Flashcards', icon: FaLightbulb }
+    { id: 'flashcards' as TabType, label: 'Flashcards', icon: FaLightbulb },
+    { id: 'prompt' as TabType, label: 'Deep Dive', icon: FaRobot }
   ];
 
   return (
