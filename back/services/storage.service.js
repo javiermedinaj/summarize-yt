@@ -1,32 +1,22 @@
-import fs from 'fs/promises';
-import path from 'path';
-import { fileURLToPath } from 'url';
+// Storage service adaptado para Vercel (serverless)
+// En Vercel no podemos guardar archivos, solo procesamos y retornamos datos
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const resultsDir = path.join(__dirname, '..', 'results');
-await fs.mkdir(resultsDir, { recursive: true }).catch(() => {});
+console.log('🚀 Storage service iniciado para entorno serverless');
 
 export async function saveVideoData(videoId, data) {
     try {
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        const filename = `${videoId}_${timestamp}.json`;
-        const filepath = path.join(resultsDir, filename);
+        // En Vercel no podemos guardar archivos en el sistema de archivos
+        // Solo logueamos la información
+        console.log(`📊 Datos procesados para video: ${videoId}`);
+        console.log(`🎯 Tipo de datos:`, Object.keys(data));
         
-        const dataToSave = {
-            videoId,
-            timestamp: new Date().toISOString(),
-            ...data
-        };
-        
-        await fs.writeFile(filepath, JSON.stringify(dataToSave, null, 2));
-        console.log(`✅ Datos guardados en: ${filename}`);
+        const filename = `${videoId}_${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
+        console.log(`✅ Simulación de guardado: ${filename}`);
         
         return filename;
     } catch (error) {
-        console.error('Error guardando datos:', error);
-        throw new Error('Failed to save video data');
+        console.error('Error procesando datos:', error);
+        throw new Error('Failed to process video data');
     }
 }
 
