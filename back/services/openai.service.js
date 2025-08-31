@@ -18,31 +18,65 @@ const options = { endpoint, apiKey, deployment, apiVersion };
 const openaiClient = new AzureOpenAI(options);
 
 export async function summarizeText(text) {
+  if (!text || text.length < 50) {
+    throw new Error("Content too short for meaningful analysis");
+  }
+
   try {
     const result = await openaiClient.chat.completions.create({
       messages: [
         {
           role: "system",
-          content: `Eres un experto analista de contenido y redactor profesional. Tu tarea es crear resúmenes ejecutivos de alta calidad que sean:
+          content: `Eres un experto analista de contenido y redactor profesional especializado en crear resúmenes ejecutivos de alta calidad. Tu objetivo es transformar contenido complejo en información clara, accionable y bien estructurada.
 
-1. **Estructurados y organizados**: Usa títulos, subtítulos y viñetas para facilitar la lectura
-2. **Profesionales**: Mantén un tono formal pero accesible, apropiado para un entorno empresarial
-3. **Completos**: Incluye puntos clave, insights principales y conclusiones relevantes
-4. **Accionables**: Destaca información práctica y aplicable
-5. **Contextualizados**: Proporciona contexto cuando sea necesario
+**CRITERIOS DE CALIDAD:**
+1. **Completitud Total**: Incluye TODOS los temas, proyectos, experimentos y conceptos mencionados
+2. **Estructura Profesional**: Usa jerarquía clara con títulos, subtítulos y viñetas
+3. **Tono Adaptativo**: Formal pero accesible, apropiado para audiencias técnicas y ejecutivas
+4. **Accionabilidad**: Destaca información práctica y aplicable inmediatamente
+5. **Contextualización**: Proporciona contexto cuando sea necesario para comprensión
 
-Formato del resumen:
-- **Resumen Ejecutivo**: 2-3 oraciones con los puntos más importantes
-- **Puntos Clave**: Lista de los conceptos principales
-- **Insights Destacados**: Análisis de las ideas más valiosas
-- **Aplicaciones Prácticas**: Cómo aplicar esta información
-- **Conclusiones**: Reflexiones finales y recomendaciones
+**ESTRUCTURA OBLIGATORIA:**
+## 📋 Resumen Ejecutivo
+- 2-3 oraciones con los puntos más importantes
+- Debe capturar la esencia del contenido completo
 
-Escribe en español con un estilo profesional y académico.`,
+## 🎯 Puntos Clave
+- Lista numerada de conceptos principales
+- Máximo 7-8 puntos
+- **IMPORTANTE**: Incluye TODOS los proyectos, experimentos y conceptos mencionados
+- Usa viñetas con **negritas** para términos importantes
+
+## 💡 Insights Destacados
+- Análisis de las ideas más valiosas
+- Conexiones entre conceptos
+- Implicaciones prácticas
+- **NO OMITAS** temas importantes por parecer secundarios
+
+## 🚀 Aplicaciones Prácticas
+- Cómo aplicar esta información
+- Ejemplos concretos cuando sea posible
+- Pasos accionables
+
+## 📝 Conclusiones
+- Reflexiones finales
+- Recomendaciones específicas
+- Próximos pasos sugeridos
+
+**INSTRUCCIONES ESPECÍFICAS:**
+- Escribe en español con estilo profesional y académico
+- Usa markdown para formato (##, **, -, etc.)
+- **CRÍTICO**: Asegúrate de incluir TODOS los temas mencionados, no solo los más obvios
+- Mantén un balance entre detalle y concisión
+- Prioriza información práctica sobre teórica
+- Incluye ejemplos cuando sea relevante
+- **NO FILTRES** contenido importante por ser "secundario"`,
         },
         {
           role: "user",
-          content: `Analiza y resume el siguiente contenido de manera profesional y estructurada: ${text}`,
+          content: `Analiza y resume el siguiente contenido siguiendo EXACTAMENTE la estructura especificada. Asegúrate de que el resumen sea profesional, estructurado, accionable y COMPLETO - incluyendo TODOS los temas, proyectos y conceptos mencionados:
+
+${text}`,
         },
       ],
       max_tokens: 1200,
@@ -62,40 +96,53 @@ Escribe en español con un estilo profesional y académico.`,
   }
 }
 
-export async function generateFlashcardsFromText(text, maxFlashcards = 5) {
+export async function generateFlashcardsFromText(text, maxFlashcards = 6) {
+  if (!text || text.length < 50) {
+    throw new Error("Content too short for meaningful flashcards");
+  }
+
   try {
     const result = await openaiClient.chat.completions.create({
       messages: [
         {
           role: "system",
-          content: `Eres un experto en diseño instruccional y creación de contenido educativo. Tu tarea es crear flashcards de alta calidad que sean:
+          content: `Eres un experto en diseño instruccional y creación de contenido educativo. Tu tarea es crear flashcards de alta calidad que promuevan el aprendizaje efectivo y la retención de conocimiento.
 
-1. **Educativamente efectivas**: Preguntas que promuevan el pensamiento crítico y la comprensión profunda
-2. **Profesionales**: Usa terminología técnica apropiada y mantén un tono formal
+**CRITERIOS DE CALIDAD:**
+1. **Educativamente Efectivas**: Preguntas que promuevan pensamiento crítico y comprensión profunda
+2. **Profesionales**: Terminología técnica apropiada y tono formal
 3. **Estructuradas**: Preguntas claras y respuestas concisas pero completas
 4. **Aplicables**: Enfócate en conceptos prácticos y aplicables
-5. **Diversas**: Incluye diferentes tipos de preguntas (conceptos, aplicaciones, análisis)
+5. **Diversas**: Incluye diferentes tipos de preguntas y niveles de dificultad
 
-Tipos de preguntas a incluir:
-- Conceptos fundamentales
-- Aplicaciones prácticas
-- Análisis de situaciones
-- Comparaciones y contrastes
-- Casos de uso específicos
+**TIPOS DE PREGUNTAS A INCLUIR:**
+- **Conceptos Fundamentales**: Definiciones y principios básicos
+- **Aplicaciones Prácticas**: Casos de uso y implementaciones
+- **Análisis de Situaciones**: Evaluación de escenarios reales
+- **Comparaciones y Contrastes**: Diferencias y similitudes entre conceptos
+- **Casos de Uso Específicos**: Ejemplos concretos del mundo real
+- **Problemas y Soluciones**: Identificación y resolución de desafíos
 
-Formato: JSON array con objetos {question, answer}
-- question: Pregunta clara y específica
-- answer: Respuesta completa pero concisa
+**FORMATO REQUERIDO:**
+JSON array con objetos {question, answer}
+- question: Pregunta clara, específica y bien formulada
+- answer: Respuesta completa pero concisa (máximo 2-3 oraciones)
+
+**EJEMPLOS DE PREGUNTAS:**
+- "¿Cuál es la diferencia principal entre X e Y?"
+- "¿Cómo se aplica el concepto de Z en un entorno empresarial?"
+- "¿Qué pasos seguirías para implementar X en tu organización?"
+- "¿Cuáles son los beneficios y desventajas de Y?"
 
 Escribe en español con terminología técnica apropiada. Return ONLY a valid JSON array, no markdown formatting.`,
         },
         {
           role: "user",
-          content: `Crea ${maxFlashcards} flashcards educativas de alta calidad basadas en este contenido. Return ONLY a valid JSON array: ${text}`,
+          content: `Crea ${maxFlashcards} flashcards educativas de alta calidad basadas en este contenido. Asegúrate de incluir una variedad de tipos de preguntas. Return ONLY a valid JSON array: ${text}`,
         },
       ],
-      max_tokens: 1000,
-      temperature: 0.7,
+      max_tokens: 1200, // Aumentado para 6 flashcards
+      temperature: 0.7, // Balanceado para flashcards
       top_p: 1,
       model: modelName,
     });

@@ -1,9 +1,0 @@
-import express from 'express';
-import { handleExtractSummary, handleExtractSubtitles } from '../controllers/video.controller.js';
-
-const router = express.Router();
-
-router.post('/extract-summary', handleExtractSummary);
-router.post('/extract-subtitles', handleExtractSubtitles);
-
-export default router;

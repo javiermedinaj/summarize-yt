@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaYoutube, FaBrain, FaTerminal, FaCopy } from 'react-icons/fa';
+import { FaYoutube, FaBrain, FaTerminal } from 'react-icons/fa';
 
 interface HeroProps {
   title: string;
@@ -48,24 +48,13 @@ export const Hero: React.FC<HeroProps> = ({ subtitle }) => {
                 Try Web App
               </a>
               <a
-                href="https://github.com/javiermedinaj/summarize-yt-rust" target='_blank' rel='noreferrer'
+                href="#terminal-app"
                 className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-transparent border-2 border-gray-300 text-gray-900 font-semibold rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base"
               >
                 Terminal 
               </a>
             </div>
 
-            <div className="flex justify-center lg:justify-start">
-              <div className="bg-gray-900 text-white rounded-lg p-3 sm:p-4 font-mono text-xs sm:text-sm max-w-full sm:max-w-md overflow-x-auto">
-                <div className="flex items-center gap-2 min-w-max">
-                  <span className="text-gray-400">$</span>
-                  <span className="text-orange-400">cargo</span>
-                  <span className="text-white">run</span>
-                  <span className="text-blue-400">yt-ai-resume</span>
-                  <FaCopy className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 cursor-pointer hover:text-white transition-colors flex-shrink-0" />
-                </div>
-              </div>
-            </div>
           </div>
 
           <div className="flex justify-center lg:justify-end">
@@ -86,10 +75,8 @@ export const Hero: React.FC<HeroProps> = ({ subtitle }) => {
                 <div className="text-gray-400">Usage: yt-ai-resume [OPTIONS] &lt;URL&gt;</div>
                 <div className="text-gray-400">Options:</div>
                 <div className="text-gray-400">  --summary     Generate AI summary</div>
-                <div className="text-gray-400">  --flashcards  Create study flashcards</div>
-                <div className="text-gray-400">  --export      Export to markdown/PDF</div>
-                <div className="text-gray-400">  --help        Print help</div>
-                <div className="text-gray-400">  --version     Print version</div>
+                <div className="text-gray-400">  --flashcard   Create study flashcards</div>
+                <div className="text-gray-400">  --chat        Chat using ollama in local</div>
               </div>
             </div>
           </div>

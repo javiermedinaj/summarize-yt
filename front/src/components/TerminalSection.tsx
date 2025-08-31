@@ -32,13 +32,12 @@ export const TerminalSection: React.FC = () => {
               <div className="text-gray-400">Options:</div>
               <div className="text-gray-400">  --summary     Generate AI summary</div>
               <div className="text-gray-400">  --flashcards  Create study flashcards</div>
-              <div className="text-gray-400">  --export      Export to markdown/PDF</div>
               <div className="text-gray-400">  --help        Print help</div>
-              <div className="text-gray-400">  --version     Print version</div>
+              <div className="text-gray-400">  --chat       Chat using ollama in local</div>
               <div className="mt-4">$ summarize-yt https://youtube.com/watch?v=...</div>
               <div className="text-blue-400">📹 Extracting subtitles...</div>
               <div className="text-blue-400">🤖 Generating summary...</div>
-              <div className="text-green-400">✅ Summary saved to output.md</div>
+              <div className="text-green-400">✅ Summary generated successfully</div>
             </div>
           </div>
           <div className="space-y-8">
@@ -83,17 +82,24 @@ export const TerminalSection: React.FC = () => {
                 <FaDownload className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Easy Installation</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Interactive</h3>
                 <p className="text-gray-600">
-                  Single binary distribution. No dependencies, no runtime requirements. Just download and run.
+                  Interactive using ollama in local enrich your knowledge base.
                 </p>
               </div>
             </div>
           </div>
         </div>
 
-  
         <div className="mt-16 bg-white rounded-lg p-4 sm:p-6 lg:p-8 shadow-lg">
+          <div className="flex justify-center items-center">
+            <button className="bg-black hover:bg-blue-950 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+              <a href="https://github.com/javiermedinaj/summarize-yt-rust" target='_blank' className="block text-center">Ver Estado</a>
+            </button>
+          </div>
+        </div>
+       
+        {/*  <div className="mt-16 bg-white rounded-lg p-4 sm:p-6 lg:p-8 shadow-lg">
           <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6 text-center">Installation</h3>
           <div className="bg-black rounded-lg p-3 sm:p-4 lg:p-6 font-mono text-xs sm:text-sm overflow-x-auto">
             <div className="text-green-400"># Clone the repository</div>
@@ -119,7 +125,7 @@ export const TerminalSection: React.FC = () => {
               View all repositories →
             </a>
           </div>
-        </div>
+        </div> */}
       </div>
     </section>
   );

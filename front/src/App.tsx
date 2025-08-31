@@ -21,7 +21,7 @@ function App() {
 
       <TerminalSection />
 
-      <Footer message="Built with ❤️ using React, Node.js, and Azure OpenAI" />
+      <Footer/>
     </div>
   );
 }

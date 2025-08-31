@@ -8,7 +8,7 @@ const textSchema = Joi.object({
 
 export async function handleGenerateFlashcards(req, res) {
     try {
-        console.log('🔄 Generando flashcards...');
+        console.log(' Generando flashcards...');
         
         const { error } = textSchema.validate(req.body);
         if (error) {
@@ -19,16 +19,15 @@ export async function handleGenerateFlashcards(req, res) {
         const { text } = req.body;
         
         if (!text) {
-            console.log('❌ Texto no proporcionado');
+            console.log(' Texto no proporcionado');
             return res.status(400).json({ error: 'Text is required' });
         }
         
-        console.log(`📝 Texto recibido: ${text.length} caracteres`);
+        console.log(`Texto recibido: ${text.length} caracteres`);
         
-        const flashcards = await generateFlashcardsFromText(text, 5);
-        console.log(`✅ Flashcards generadas: ${flashcards.length}`);
+        const flashcards = await generateFlashcardsFromText(text, 6);
+        console.log(` Flashcards generadas: ${flashcards.length}`);
         
-        // Guardar flashcards (usamos un ID temporal ya que no tenemos videoId aquí)
         const tempId = `flashcards_${Date.now()}`;
         await saveFlashcards(tempId, flashcards);
         
@@ -37,22 +36,20 @@ export async function handleGenerateFlashcards(req, res) {
             flashcards: flashcards
         };
         
-        console.log('📤 Enviando respuesta de flashcards...');
+        console.log(' Enviando respuesta de flashcards...');
         res.json(response);
     } catch (error) {
-        console.error('❌ Error generating flashcards:', error);
+        console.error('Error generating flashcards:', error);
         res.status(500).json({ 
             error: error.message || 'Failed to generate flashcards from text'
         });
     }
 }
 
-// Mantener la función original para compatibilidad
 export async function handleTextFlashcards(text) {
     try {
-        const flashcards = await generateFlashcardsFromText(text, 5);
-        
-        // Guardar flashcards (usamos un ID temporal ya que no tenemos videoId aquí)
+        const flashcards = await generateFlashcardsFromText(text, 6);
+        //guardar flashcards
         const tempId = `flashcards_${Date.now()}`;
         await saveFlashcards(tempId, flashcards);
         

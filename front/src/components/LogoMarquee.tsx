@@ -1,9 +1,8 @@
 import React from 'react';
-import { FaFileExport, FaSave, FaBrain, FaGraduationCap, FaVideo, FaBook, FaLightbulb, FaChartLine, FaUsers, FaClock, FaSearch, FaDownload } from 'react-icons/fa';
+import {  FaSave, FaBrain, FaGraduationCap, FaVideo, FaBook, FaLightbulb, FaChartLine, FaUsers, FaClock, FaSearch } from 'react-icons/fa';
 
 export const LogoMarquee: React.FC = () => {
   const useCases = [
-    { icon: FaFileExport, text: 'Export to Obsidian', color: 'text-purple-600', bgColor: 'bg-purple-100' },
     { icon: FaSave, text: 'Save Notes', color: 'text-blue-600', bgColor: 'bg-blue-100' },
     { icon: FaBrain, text: 'Generate AI Answers', color: 'text-green-600', bgColor: 'bg-green-100' },
     { icon: FaVideo, text: 'Video Analysis', color: 'text-red-600', bgColor: 'bg-red-100' },
@@ -14,7 +13,6 @@ export const LogoMarquee: React.FC = () => {
     { icon: FaUsers, text: 'Collaborative Learning', color: 'text-pink-600', bgColor: 'bg-pink-100' },
     { icon: FaClock, text: 'Time Management', color: 'text-gray-600', bgColor: 'bg-gray-100' },
     { icon: FaSearch, text: 'Content Discovery', color: 'text-cyan-600', bgColor: 'bg-cyan-100' },
-    { icon: FaDownload, text: 'Download Resources', color: 'text-emerald-600', bgColor: 'bg-emerald-100' }
   ];
 
   return (
@@ -31,7 +29,6 @@ export const LogoMarquee: React.FC = () => {
         
         <div className="marquee-container">
           <div className="flex animate-marquee space-x-8">
-            {/* First set of use cases */}
             <div className="flex items-center space-x-8 min-w-full">
               {useCases.map((useCase, index) => (
                 <div key={`first-${index}`} className="flex-shrink-0">
@@ -45,7 +42,6 @@ export const LogoMarquee: React.FC = () => {
               ))}
             </div>
             
-            {/* Second set of use cases (duplicate for seamless loop) */}
             <div className="flex items-center space-x-8 min-w-full">
               {useCases.map((useCase, index) => (
                 <div key={`second-${index}`} className="flex-shrink-0">

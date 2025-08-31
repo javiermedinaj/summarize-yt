@@ -10,7 +10,7 @@ const videoUrlSchema = Joi.object({
 
 export async function handleExtractSummary(req, res) {
     try {
-        console.log('🚀 Iniciando extracción de summary...');
+        console.log('extracción de summary...');
         
         const { error } = videoUrlSchema.validate(req.body);
         if (error) {
@@ -28,7 +28,7 @@ export async function handleExtractSummary(req, res) {
             return res.status(400).json({ error: 'Invalid YouTube URL' });
         }
 
-        console.log(`🎥 Extrayendo subtítulos para video: ${videoId}`);
+        console.log(`Extrayendo subtítulos para video: ${videoId}`);
         
         const subtitlesResult = await getVideoSubtitles(videoUrl);
         const subtitles = subtitlesResult.text;
@@ -37,20 +37,19 @@ export async function handleExtractSummary(req, res) {
             return res.status(400).json({ error: 'No subtitles found or subtitles too short' });
         }
 
-        console.log(`📝 Transcript extraído: ${subtitles.length} caracteres`);
+        console.log(` Transcript extraído: ${subtitles.length} caracteres`);
         
-        console.log('🔄 Generando summary...');
+        console.log('Generando summary...');
         const summary = await summarizeText(subtitles);
-        console.log('✅ Summary generado');
-        
-        console.log('🔄 Generando deep dive prompt...');
+        console.log('Summary generado');
+    
+        console.log(' Generando deep dive prompt...');
         let prompt = null;
         try {
             prompt = await generateDeepDivePrompt(subtitles);
             console.log('✅ Prompt generado:', prompt);
         } catch (promptError) {
-            console.error('❌ Error generando prompt:', promptError);
-            // Continuamos sin el prompt si falla
+            console.error(' Error generando prompt:', promptError);
             prompt = {
                 mainPrompt: "Error generando prompt. Por favor, intenta nuevamente.",
                 suggestedQuestions: [],
@@ -87,7 +86,7 @@ export async function handleExtractSubtitles(req, res) {
             return res.status(400).json({ error: 'Invalid YouTube URL' });
         }
 
-        console.log(`🎥 Extrayendo subtítulos para video: ${videoId}`);
+        console.log(` Extrayendo subtítulos para video: ${videoId}`);
         
         const subtitlesResult = await getVideoSubtitles(videoUrl);
         const subtitles = subtitlesResult.text;
@@ -96,7 +95,7 @@ export async function handleExtractSubtitles(req, res) {
             return res.status(400).json({ error: 'No subtitles found or subtitles too short' });
         }
 
-        console.log(`✅ Subtítulos extraídos: ${subtitles.length} caracteres`);
+        console.log(`Subtítulos extraídos: ${subtitles.length} caracteres`);
         
         await saveSubtitles(videoId, subtitles);
         
