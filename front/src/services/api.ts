@@ -1,10 +1,8 @@
 import { Flashcard, SummaryResponse } from './types';
 
 const getApiBaseUrl = (): string => {
-  if (import.meta.env.DEV) {
-    return import.meta.env.VITE_API_URL || 'http://localhost:5000';
-  }
-  return import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  // Siempre usar la variable de entorno, con fallback solo para desarrollo
+  return import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000' : '');
 };
 
 const API_BASE_URL = getApiBaseUrl();
