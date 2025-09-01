@@ -1,7 +1,10 @@
 import React from 'react';
 import { FaTerminal, FaRust, FaDownload, FaCode } from 'react-icons/fa';
+import { useLanguage } from '../i18n/LanguageContext';
 
 export const TerminalSection: React.FC = () => {
+  const { t, } = useLanguage();
+  
   return (
     <section id="terminal-app" className="py-20 bg-gray-50 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -12,11 +15,11 @@ export const TerminalSection: React.FC = () => {
             </div>
           </div>
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Terminal App (Working)
+            {t.terminal.title}
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Experience the power of SummarizeYT directly in your terminal. Built with Rust and Ratatui for maximum performance and a native terminal experience.
-          </p>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            {t.terminal.description}
+            </p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -27,28 +30,30 @@ export const TerminalSection: React.FC = () => {
               <div className="w-3 h-3 bg-green-500 rounded-full"></div>
             </div>
             <div className="font-mono text-green-400 text-sm space-y-2">
-              <div>$ summarize-yt --help</div>
-              <div className="text-gray-400">Usage: summarize-yt [OPTIONS] &lt;URL&gt;</div>
-              <div className="text-gray-400">Options:</div>
-              <div className="text-gray-400">  --summary     Generate AI summary</div>
-              <div className="text-gray-400">  --flashcards  Create study flashcards</div>
-              <div className="text-gray-400">  --help        Print help</div>
-              <div className="text-gray-400">  --chat       Chat using ollama in local</div>
-              <div className="mt-4">$ summarize-yt https://youtube.com/watch?v=...</div>
-              <div className="text-blue-400">📹 Extracting subtitles...</div>
-              <div className="text-blue-400">🤖 Generating summary...</div>
-              <div className="text-green-400">✅ Summary generated successfully</div>
+              <div>$ yt-ai-terminal https://youtube.com/watch?v=react-crud-tutorial</div>
+              <div className="text-blue-400">🔍 Analizando contenido del tutorial...</div>
+              <div className="text-blue-400">📋 Detectado: Aplicación React CRUD</div>
+              <div className="text-yellow-400">📝 Generando guía de comandos...</div>
+              <div className="text-white mt-3">═══ GUÍA DE COMANDOS ═══</div>
+              <div className="text-gray-300">1. npx create-react-app my-crud-app</div>
+              <div className="text-gray-300">2. cd my-crud-app</div>
+              <div className="text-gray-300">3. npm install axios react-router-dom</div>
+              <div className="text-gray-300">4. Crear: src/components/UserList.js</div>
+              <div className="text-gray-300">5. Crear: src/components/UserForm.js</div>
+              <div className="text-gray-300">6. Configurar: API service en src/api/</div>
+              <div className="text-green-400">✅ Guía generada! Sigue los pasos para replicar el tutorial</div>
             </div>
           </div>
+
           <div className="space-y-8">
             <div className="flex items-start gap-4">
               <div className="p-3 bg-black rounded-lg">
                 <FaRust className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Built with Rust</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">{t.terminal.builtWithRust}</h3>
                 <p className="text-gray-600">
-                  Lightning-fast performance with memory safety and zero-cost abstractions. Perfect for processing large video transcripts.
+                  {t.terminal.rustDescription}
                 </p>
               </div>
             </div>
@@ -58,9 +63,9 @@ export const TerminalSection: React.FC = () => {
                 <FaTerminal className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Native Terminal UI</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">{t.terminal.nativeTerminal}</h3>
                 <p className="text-gray-600">
-                  Beautiful terminal interface built with Ratatui. Rich text formatting, progress bars, and interactive elements.
+                  {t.terminal.terminalDescription}
                 </p>
               </div>
             </div>
@@ -70,9 +75,9 @@ export const TerminalSection: React.FC = () => {
                 <FaCode className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">CLI First</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">{t.terminal.cliFirst}</h3>
                 <p className="text-gray-600">
-                  Designed for developers and power users. Integrate into your workflows, scripts, and automation pipelines.
+                  {t.terminal.cliDescription}
                 </p>
               </div>
             </div>
@@ -82,50 +87,16 @@ export const TerminalSection: React.FC = () => {
                 <FaDownload className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Interactive</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">{t.terminal.interactive}</h3>
                 <p className="text-gray-600">
-                  Interactive using ollama in local enrich your knowledge base.
+                  {t.terminal.interactiveDescription}
                 </p>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="mt-16 bg-white rounded-lg p-4 sm:p-6 lg:p-8 shadow-lg">
-          <div className="flex justify-center items-center">
-            <button className="bg-black hover:bg-blue-950 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
-              <a href="https://github.com/javiermedinaj/summarize-yt-rust" target='_blank' className="block text-center">Ver Estado</a>
-            </button>
-          </div>
-        </div>
-       
-        {/*  <div className="mt-16 bg-white rounded-lg p-4 sm:p-6 lg:p-8 shadow-lg">
-          <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6 text-center">Installation</h3>
-          <div className="bg-black rounded-lg p-3 sm:p-4 lg:p-6 font-mono text-xs sm:text-sm overflow-x-auto">
-            <div className="text-green-400"># Clone the repository</div>
-            <div className="text-gray-300 break-all sm:break-normal">git clone https://github.com/javiermedinaj/summarize-yt.git</div>
-            <div className="text-gray-300">cd summarize-yt</div>
-            <div className="text-green-400 mt-4"># Prerequisites: Install Rust and Cargo</div>
-            <div className="text-gray-300 break-all sm:break-normal">curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh</div>
-            <div className="text-gray-300">source ~/.cargo/env</div>
-            <div className="text-green-400 mt-4"># Build and run</div>
-            <div className="text-gray-300">cargo build --release</div>
-            <div className="text-gray-300 break-all sm:break-normal">cargo run -- https://youtube.com/watch?v=dQw4w9WgXcQ</div>
-            <div className="text-green-400 mt-4"># Or install globally</div>
-            <div className="text-gray-300">cargo install --path .</div>
-          </div>
-          <div className="mt-4 text-center">
-            <a 
-              href="https://github.com/javiermedinaj?tab=repositories" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium text-sm sm:text-base"
-            >
-              <FaCode className="w-4 h-4" />
-              View all repositories →
-            </a>
-          </div>
-        </div> */}
+     
       </div>
     </section>
   );

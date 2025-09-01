@@ -4,25 +4,27 @@ import { LogoMarquee } from "./components/LogoMarquee";
 import { WebAppSection } from "./components/WebAppSection";
 import { TerminalSection } from "./components/TerminalSection";
 import { Footer } from "./components/Footer";
+import { LanguageProvider, useLanguage } from "./i18n/LanguageContext";
 
-function App() {
+const AppContent = () => {
+  const { t } = useLanguage();
   return (
     <div className="min-h-screen bg-white overflow-hidden">
       <Navbar />
-
-      <Hero
-        title="YT-AI-RESUME"
-        subtitle="Transform YouTube videos into actionable learning content with AI-powered summaries and flashcards. Available as a web app and coming soon as a terminal application."
-      />
-
+      <Hero title="YT-AI-RESUME" subtitle={t.hero.subtitle} />
       <LogoMarquee />
-
       <WebAppSection />
-
       <TerminalSection />
-
-      <Footer/>
+      <Footer />
     </div>
+  );
+};
+
+function App() {
+  return (
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
   );
 }
 

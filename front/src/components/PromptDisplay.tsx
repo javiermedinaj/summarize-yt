@@ -12,7 +12,6 @@ export const PromptDisplay: React.FC<PromptDisplayProps> = ({ prompt }) => {
     [key: string]: "idle" | "copied";
   }>({});
 
-  // Función para copiar texto al portapapeles
   const copyToClipboard = async (content: string, type: string) => {
     const key = `deepdive-${type}`;
 
@@ -149,50 +148,6 @@ export const PromptDisplay: React.FC<PromptDisplayProps> = ({ prompt }) => {
             <div className="text-gray-700 whitespace-pre-wrap text-sm leading-relaxed">
               {renderPromptContent(prompt.mainPrompt)}
             </div>
-          </div>
-        </div>
-
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <h4 className="text-lg font-semibold text-gray-800 bg-green-100 px-3 py-1 rounded-lg">
-              Preguntas Sugeridas
-            </h4>
-            <button
-              onClick={() =>
-                copyToClipboard(
-                  prompt.suggestedQuestions.join("\n"),
-                  "questions"
-                )
-              }
-              className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-md transition-colors duration-200 ${
-                copyStates["deepdive-questions"] === "copied"
-                  ? "bg-green-100 text-green-700"
-                  : "bg-green-100 text-green-700 hover:bg-green-200"
-              }`}
-              title="Copiar preguntas sugeridas"
-            >
-              {copyStates["deepdive-questions"] === "copied" ? (
-                <FaCheck className="w-3 h-3 mr-1" />
-              ) : (
-                <FaCopy className="w-3 h-3 mr-1" />
-              )}
-              {copyStates["deepdive-questions"] === "copied"
-                ? "Copiado"
-                : "Copiar"}
-            </button>
-          </div>
-          <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-            <ul className="space-y-2">
-              {prompt.suggestedQuestions.map((question, index) => (
-                <li
-                  key={index}
-                  className="text-gray-700 text-sm flex items-start"
-                >
-                  <span className="text-green-600 font-medium mr-2">•</span>
-                  {question}
-                </li>
-              ))}
-            </ul>
           </div>
         </div>
 

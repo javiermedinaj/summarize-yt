@@ -22,9 +22,6 @@ export const LogoMarquee: React.FC = () => {
           <h2 className="text-2xl font-semibold text-gray-900 mb-4">
             Casos de uso populares
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Descubre cómo YT-AI-RESUME puede transformar tu forma de aprender y procesar contenido
-          </p>
         </div>
         
         <div className="marquee-container">

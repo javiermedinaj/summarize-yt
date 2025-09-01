@@ -1,10 +1,11 @@
 export interface Prompt {
   mainPrompt: string;
-  suggestedQuestions: string[];
   context: {
-    summary: string;
-    keyPoints: string[];
-    relevantTopics: string[];
+    area: string;
+    contentLength: number;
+    timestamp: string;
+    model?: string;
+    tokensUsed?: number;
   };
 }
 

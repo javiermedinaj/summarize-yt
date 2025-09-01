@@ -8,6 +8,7 @@ import { ErrorMessage } from "./ErrorMessage";
 import { extractSummary, generateFlashcards } from "../services/api";
 import { Flashcard, Prompt } from "../services/types";
 import { useState } from "react";
+import { useLanguage } from "../i18n/LanguageContext";
 
 type TabType = "summary" | "flashcards" | "prompt";
 
@@ -19,6 +20,7 @@ export const WebAppSection: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>("summary");
   const [prompt, setPrompt] = useState<Prompt | undefined>(undefined);
+  const { t } = useLanguage();
 
   const handleUrlSubmit = async (url: string) => {
     setVideoUrl(url);
@@ -70,11 +72,10 @@ export const WebAppSection: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Web Application
+            {t.webApp.title}
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Try our web interface now. Extract subtitles, generate summaries,
-            and create flashcards from any YouTube video.
+            {t.webApp.description}
           </p>
         </div>
 

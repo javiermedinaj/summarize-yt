@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { FaTerminal, FaGlobe, FaBars, FaTimes } from 'react-icons/fa';
+import { LanguageToggle } from '../i18n/LanguageToggle';
+import { useLanguage } from '../i18n/LanguageContext';
 
 export const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { t } = useLanguage();
 
   return (
     <nav className="bg-white/95 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
@@ -22,17 +25,18 @@ export const Navbar: React.FC = () => {
               className="text-gray-600 hover:text-black px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2"
             >
               <FaGlobe className="w-4 h-4" />
-              <span className="hidden lg:inline">Web App</span>
-              <span className="lg:hidden">Web</span>
+              <span className="hidden lg:inline">{t.navbar.webApp}</span>
+              <span className="lg:hidden">{t.navbar.web}</span>
             </a>
             <a
               href="#terminal-app"
               className="text-gray-600 hover:text-black px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2"
             >
               <FaTerminal className="w-4 h-4" />
-              <span className="hidden lg:inline">Terminal (Coming Soon)</span>
-              <span className="lg:hidden">Terminal</span>
+              <span className="hidden lg:inline">{t.navbar.terminalComingSoon}</span>
+              <span className="lg:hidden">{t.navbar.terminal}</span>
             </a>
+            <LanguageToggle />
           </div>
 
           <div className="md:hidden">
@@ -59,7 +63,7 @@ export const Navbar: React.FC = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 <FaGlobe className="w-4 h-4" />
-                Web App
+                {t.navbar.webApp}
               </a>
               <a
                 href="#terminal-app"
@@ -67,9 +71,11 @@ export const Navbar: React.FC = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 <FaTerminal className="w-4 h-4" />
-                Terminal (Coming Soon)
+                {t.navbar.terminalComingSoon}
               </a>
-            
+              <div className="px-3 py-2">
+                <LanguageToggle />
+              </div>
             </div>
           </div>
         )}
