@@ -12,10 +12,14 @@ A powerful web application that leverages AI to generate concise summaries and f
 
 ##  Screenshots 
 ### Interface 
-![Interface](./demo-img/interfaz.png) 
+![Interface](./demo-img/demo1.png) 
 
 ### Functionality 
-![Functionality](./demo-img/funcionamiento.png)
+![Functionality](./demo-img/demo2.png)
+
+
+### FlowChart
+![FlowChart](./demo-img/flowchart.png)
 
 ## Features
 

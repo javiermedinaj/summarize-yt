@@ -2,7 +2,7 @@ import { Navbar } from "./components/Navbar";
 import { Hero } from "./components/Hero";
 import { LogoMarquee } from "./components/LogoMarquee";
 import { WebAppSection } from "./components/WebAppSection";
-import { TerminalSection } from "./components/TerminalSection";
+// import { TerminalSection } from "./components/TerminalSection";
 import { Footer } from "./components/Footer";
 import { LanguageProvider, useLanguage } from "./i18n/LanguageContext";
 
@@ -14,7 +14,7 @@ const AppContent = () => {
       <Hero title="YT-AI-RESUME" subtitle={t.hero.subtitle} />
       <LogoMarquee />
       <WebAppSection />
-      <TerminalSection />
+      {/* <TerminalSection /> */}
       <Footer />
     </div>
   );

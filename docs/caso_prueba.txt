@@ -1,0 +1,193 @@
+CASOS DE PRUEBA - summarize-yt
+
+------------------------------------------------------------
+ID: CP-001
+Nombre del Caso: Ingresar URL válida de YouTube
+Caso de Uso: Ingresar URL de YouTube
+Prioridad: Alta
+Precondiciones: Sistema iniciado, Conexión a internet activa
+Datos de Entrada: URL válida: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+Pasos de Ejecución: 1. Abrir la aplicación | 2. Localizar el campo de entrada de URL | 3. Ingresar la URL válida | 4. Hacer clic en el botón Procesar
+Resultado Esperado: El sistema acepta la URL, Inicia el proceso de extracción de subtítulos, Muestra mensaje de Procesando...
+Resultado Obtenido: 
+Estado: Completado
+
+------------------------------------------------------------
+ID: CP-002
+Nombre del Caso: Ingresar URL inválida
+Caso de Uso: Ingresar URL de YouTube
+Prioridad: Alta
+Precondiciones: Sistema iniciado
+Datos de Entrada: URL inválida: https://invalid-url.com
+Pasos de Ejecución: 1. Abrir la aplicación | 2. Ingresar una URL no válida (no de YouTube) | 3. Hacer clic en Procesar
+Resultado Esperado: El sistema rechaza la URL, Muestra mensaje de error: URL inválida, No inicia el procesamiento
+Resultado Obtenido: 
+Estado: Completado
+
+------------------------------------------------------------
+ID: CP-003
+Nombre del Caso: Video sin subtítulos disponibles
+Caso de Uso: Extraer/Transcribir Subtítulos
+Prioridad: Alta
+Precondiciones: URL válida ingresada, Video de YouTube sin subtítulos
+Datos de Entrada: URL de video sin subtítulos
+Pasos de Ejecución: 1. Ingresar URL de video sin subtítulos | 2. Iniciar procesamiento
+Resultado Esperado: Sistema detecta falta de subtítulos, Muestra mensaje: Subtítulos no disponibles, Detiene el proceso
+Resultado Obtenido: 
+Estado: Completado
+
+------------------------------------------------------------
+ID: CP-004
+Nombre del Caso: Generar resumen exitosamente
+Caso de Uso: Generar Resumen
+Prioridad: Alta
+Precondiciones: URL válida procesada, Subtítulos extraídos correctamente, API de OpenAI disponible
+Datos de Entrada: URL válida con subtítulos
+Pasos de Ejecución: 1. Procesar video con subtítulos | 2. Seleccionar opción Generar Resumen | 3. Esperar respuesta
+Resultado Esperado: Sistema genera resumen del contenido, Resumen es coherente y relevante, Se muestra en pantalla correctamente
+Resultado Obtenido: 
+Estado: Completado
+
+------------------------------------------------------------
+ID: CP-005
+Nombre del Caso: Generar flashcards exitosamente
+Caso de Uso: Generar Flashcards
+Prioridad: Alta
+Precondiciones: URL válida procesada, Subtítulos extraídos correctamente, API de OpenAI disponible
+Datos de Entrada: URL válida con subtítulos
+Pasos de Ejecución: 1. Procesar video con subtítulos | 2. Seleccionar opción Generar Flashcards | 3. Esperar respuesta
+Resultado Esperado: Sistema genera flashcards (pregunta/respuesta), Flashcards son relevantes al contenido, Se muestran correctamente en pantalla
+Resultado Obtenido: 
+Estado: Completado
+
+------------------------------------------------------------
+ID: CP-006
+Nombre del Caso: Generar prompts para deep dive
+Caso de Uso: Generar Prompts para deep dive
+Prioridad: Media
+Precondiciones: URL válida procesada, Subtítulos extraídos correctamente, API de OpenAI disponible
+Datos de Entrada: URL válida con subtítulos
+Pasos de Ejecución: 1. Procesar video con subtítulos | 2. Seleccionar opción Generar Prompts | 3. Esperar respuesta
+Resultado Esperado: Sistema genera prompts para profundizar, Prompts son específicos del tema, Se muestran correctamente
+Resultado Obtenido: 
+Estado: Completado
+
+------------------------------------------------------------
+ID: CP-007
+Nombre del Caso: Visualizar resultados
+Caso de Uso: Visualizar Resultados
+Prioridad: Alta
+Precondiciones: Procesamiento completado exitosamente, Al menos un tipo de contenido generado
+Datos de Entrada: N/A
+Pasos de Ejecución: 1. Completar generación de contenido | 2. Observar la interfaz de resultados
+Resultado Esperado: Todos los resultados se muestran claramente, La interfaz es legible y organizada, No hay errores de visualización
+Resultado Obtenido: 
+Estado: Completado
+
+------------------------------------------------------------
+ID: CP-008
+Nombre del Caso: Error en API de OpenAI
+Caso de Uso: Procesar con OpenAI
+Prioridad: Alta
+Precondiciones: Subtítulos extraídos, API key inválida o servicio no disponible
+Datos de Entrada: API key incorrecta o sin conexión
+Pasos de Ejecución: 1. Configurar API key inválida | 2. Intentar generar contenido
+Resultado Esperado: Sistema detecta el error, Muestra mensaje claro de error, No se rompe la aplicación
+Resultado Obtenido: 
+Estado: Completado
+
+------------------------------------------------------------
+ID: CP-009
+Nombre del Caso: Procesamiento paralelo de resumen flashcards y prompts
+Caso de Uso: Generar Resumen + Flashcards + Prompts
+Prioridad: Media
+Precondiciones: URL válida procesada, Subtítulos disponibles, API funcional
+Datos de Entrada: URL válida
+Pasos de Ejecución: 1. Procesar video | 2. Solicitar generación de los 3 tipos simultáneamente | 3. Observar el proceso
+Resultado Esperado: Los tres procesos se ejecutan, Todos completan exitosamente, Los resultados se muestran juntos
+Resultado Obtenido: 
+Estado: Completado
+
+------------------------------------------------------------
+ID: CP-010
+Nombre del Caso: Video muy largo (más de 1 hora)
+Caso de Uso: Extraer/Transcribir Subtítulos
+Prioridad: Media
+Precondiciones: Sistema iniciado
+Datos de Entrada: URL de video de YouTube de más de 1 hora
+Pasos de Ejecución: 1. Ingresar URL de video largo | 2. Iniciar procesamiento | 3. Observar comportamiento
+Resultado Esperado: Sistema procesa correctamente, Tiempo de respuesta aceptable, No se produce timeout
+Resultado Obtenido: 
+Estado: Completado
+
+------------------------------------------------------------
+ID: CP-011
+Nombre del Caso: Cambiar idioma de interfaz (ES/EN)
+Caso de Uso: Configuración de idioma
+Prioridad: Media
+Precondiciones: Aplicación abierta
+Datos de Entrada: N/A
+Pasos de Ejecución: 1. Localizar el interruptor ES/EN en la parte superior | 2. Hacer clic para cambiar idioma | 3. Observar cambios en UI
+Resultado Esperado: Todos los textos de la interfaz cambian al idioma seleccionado
+Resultado Obtenido: Todos los textos de la interfaz cambian al idioma seleccionado
+Estado: Completado
+
+------------------------------------------------------------
+ID: CP-012
+Nombre del Caso: Indicador de carga visible
+Caso de Uso: Visualizar Resultados
+Prioridad: Alta
+Precondiciones: Solicitud enviada
+Datos de Entrada: N/A
+Pasos de Ejecución: 1. Ingresar URL | 2. Hacer clic en Submit | 3. Observar la UI durante el procesamiento
+Resultado Esperado: Se muestra spinner/indicador de progreso hasta recibir la respuesta
+Resultado Obtenido: Se muestra spinner/indicador de progreso hasta recibir la respuesta
+Estado: Completado
+
+------------------------------------------------------------
+ID: CP-013
+Nombre del Caso: Mostrar error de backend
+Caso de Uso: Ver Mensajes de Error
+Prioridad: Alta
+Precondiciones: Sistema iniciado
+Datos de Entrada: N/A
+Pasos de Ejecución: 1. Forzar un error del backend (simular fallo) | 2. Enviar solicitud | 3. Observar UI
+Resultado Esperado: La aplicación muestra mensaje de error sin romperse y permite reintentar
+Resultado Obtenido: La aplicación muestra mensaje de error sin romperse y permite reintentar
+Estado: Completado
+
+------------------------------------------------------------
+ID: CP-014
+Nombre del Caso: Limpiar resultados con botón Clear
+Caso de Uso: Procesar nuevo video
+Prioridad: Media
+Precondiciones: Hay resultados mostrados en pantalla
+Datos de Entrada: N/A
+Pasos de Ejecución: 1. Tener video procesado con resultados | 2. Hacer clic en botón "Clear" | 3. Verificar estado
+Resultado Esperado: Se limpian todos los resultados, Se regresa al formulario de entrada, Se puede ingresar nueva URL
+Resultado Obtenido: Se limpian todos los resultados, Se regresa al formulario de entrada, Se puede ingresar nueva URL
+Estado: Completado 
+
+------------------------------------------------------------
+ID: CP-015
+Nombre del Caso: Copiar prompt al portapapeles
+Caso de Uso: Copiar contenido generado
+Prioridad: Media
+Precondiciones: Prompt generado y visible en pantalla
+Datos de Entrada: N/A
+Pasos de Ejecución: 1. Generar prompts de un video | 2. Ir a pestaña "Prompts" | 3. Hacer clic en botón "Copy Full Prompt" | 4. Verificar feedback visual | 5. Pegar en otra aplicación
+Resultado Esperado: El contenido se copia al portapapeles, Aparece ícono de check (✓), Mensaje cambia a "Copied!", Se puede pegar en otras aplicaciones
+Resultado Obtenido: 
+Estado: Completado
+
+------------------------------------------------------------
+ID: CP-016
+Nombre del Caso: Limpiar resultados con botón de eliminar
+Caso de Uso: Procesar nuevo video
+Prioridad: Alta
+Precondiciones: Video procesado con resultados mostrados
+Datos de Entrada: N/A
+Pasos de Ejecución: 1. Tener video procesado con resultados | 2. Localizar botón de basura (trash icon) | 3. Hacer clic en el botón | 4. Verificar estado de la aplicación
+Resultado Esperado: Se limpian todos los resultados (resumen, flashcards, prompts), Se elimina el reproductor de video, Se regresa al formulario inicial, Se puede ingresar nueva URL
+Resultado Obtenido: 
+Estado: Completado

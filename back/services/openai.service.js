@@ -37,28 +37,28 @@ export async function summarizeText(text) {
 5. **Contextualización**: Proporciona contexto cuando sea necesario para comprensión
 
 **ESTRUCTURA OBLIGATORIA:**
-## 📋 Resumen Ejecutivo
+## Resumen
 - 2-3 oraciones con los puntos más importantes
 - Debe capturar la esencia del contenido completo
 
-## 🎯 Puntos Clave
+## Puntos Clave
 - Lista numerada de conceptos principales
 - Máximo 7-8 puntos
 - **IMPORTANTE**: Incluye TODOS los proyectos, experimentos y conceptos mencionados
 - Usa viñetas con **negritas** para términos importantes
 
-## 💡 Insights Destacados
+## Insights Destacados
 - Análisis de las ideas más valiosas
 - Conexiones entre conceptos
 - Implicaciones prácticas
 - **NO OMITAS** temas importantes por parecer secundarios
 
-## 🚀 Aplicaciones Prácticas
+## Aplicaciones Prácticas
 - Cómo aplicar esta información
 - Ejemplos concretos cuando sea posible
 - Pasos accionables
 
-## 📝 Conclusiones
+## Conclusiones
 - Reflexiones finales
 - Recomendaciones específicas
 - Próximos pasos sugeridos

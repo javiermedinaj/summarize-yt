@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaYoutube, FaBrain, FaTerminal } from 'react-icons/fa';
+import { FaYoutube, FaBrain } from 'react-icons/fa';
 
 interface HeroProps {
   title: string;
@@ -34,10 +34,10 @@ export const Hero: React.FC<HeroProps> = ({ subtitle }) => {
                 <FaBrain className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
                 <span className="text-gray-900 font-medium text-sm sm:text-base">AI</span>
               </div>
-              <div className="flex items-center gap-2 sm:gap-3 bg-gray-100 rounded-full px-4 sm:px-6 py-2 sm:py-3">
+              {/* <div className="flex items-center gap-2 sm:gap-3 bg-gray-100 rounded-full px-4 sm:px-6 py-2 sm:py-3">
                 <FaTerminal className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
                 <span className="text-gray-900 font-medium text-sm sm:text-base">Terminal</span>
-              </div>
+              </div> */}
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-6 sm:mb-8">
@@ -47,12 +47,7 @@ export const Hero: React.FC<HeroProps> = ({ subtitle }) => {
               >
                 Try Web App
               </a>
-              <a
-                href="#terminal-app"
-                className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-transparent border-2 border-gray-300 text-gray-900 font-semibold rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base"
-              >
-                Terminal 
-              </a>
+          
             </div>
 
           </div>

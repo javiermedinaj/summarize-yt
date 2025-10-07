@@ -150,7 +150,24 @@ export const PromptDisplay: React.FC<PromptDisplayProps> = ({ prompt }) => {
             </div>
           </div>
         </div>
-
+               <button
+            onClick={() => copyToClipboard(prompt.mainPrompt, "full")}
+            className={`inline-flex items-center px-3 py-1 text-sm font-medium rounded-md transition-colors duration-200 ${
+              copyStates["deepdive-full"] === "copied"
+                ? "bg-green-100 text-green-700"
+                : "bg-blue-100 text-blue-700 hover:bg-blue-200"
+            }`}
+            title="Copiar todo el prompt para usar en Claude/OpenAI"
+          >
+            {copyStates["deepdive-full"] === "copied" ? (
+              <FaCheck className="w-4 h-4 mr-1" />
+            ) : (
+              <FaCopy className="w-4 h-4 mr-1" />
+            )}
+            {copyStates["deepdive-full"] === "copied"
+              ? "Copiado"
+              : "Copiar Prompt"}
+          </button>
         <div className="border-t border-gray-200 pt-6 mt-6">
           <h4 className="text-lg font-medium text-gray-700 mb-4 text-center">
             Continuar la conversación en:
