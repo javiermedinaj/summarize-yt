@@ -141,3 +141,4 @@ Usa el botón "Clear" para limpiar los resultados y procesar un nuevo video.
 - Si algo falla, revisa el mensaje de error mostrado en pantalla.
 - Reporta problemas incluyendo: URL del video, navegador usado y captura del error.
 - Repositorio: https://github.com/javiermedinaj/summarize-yt
+

@@ -31,15 +31,15 @@ export const ContentTabs: React.FC<ContentTabsProps> = ({ activeTab, onTabChange
   ];
 
   return (
-    <div className="grid grid-cols-3 sm:flex border-b border-gray-200">
+    <div className="grid grid-cols-3 sm:flex border-b border-gray-200 dark:border-gray-950">
       {tabs.map((tab) => (
         <button
           key={tab.id}
           onClick={() => onTabChange(tab.id)}
           className={`flex items-center gap-2 px-2 sm:px-4 py-3 sm:py-2 border-b-2 font-medium text-xs sm:text-sm transition-colors ${
             activeTab === tab.id
-              ? 'border-indigo-500 text-indigo-600 bg-indigo-50 sm:bg-transparent rounded-lg sm:rounded-none'
-              : 'border-transparent text-gray-500 hover:text-gray-700 bg-gray-50 sm:bg-transparent rounded-lg sm:rounded-none'
+              ? 'border-indigo-500 dark:border-indigo-400 text-indigo-600 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/40 sm:bg-transparent rounded-lg sm:rounded-none'
+              : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 bg-gray-50 dark:bg-gray-900 sm:bg-transparent rounded-lg sm:rounded-none'
           }`}
         >
           {tab.icon}

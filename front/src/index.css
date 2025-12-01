@@ -63,13 +63,25 @@ html {
   background: #f1f5f9;
 }
 
+.dark ::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 4px;
 }
 
+.dark ::-webkit-scrollbar-thumb {
+  background: #4b5563;
+}
+
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
 }
 
 @keyframes marquee {
@@ -82,7 +94,7 @@ html {
 }
 
 .animate-marquee {
-  animation: marquee 10000ms linear infinite;
+  animation: marquee 10s linear infinite;
   will-change: transform;
 }
 
@@ -90,6 +102,20 @@ html {
   overflow: hidden;
   position: relative;
   width: 100%;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 5%,
+    black 95%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 5%,
+    black 95%,
+    transparent 100%
+  );
 }
 
 .marquee-container::before,
@@ -98,17 +124,17 @@ html {
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 100px;
-  z-index: 2;
+  width: 150px;
+  z-index: 10;
   pointer-events: none;
 }
 
 .marquee-container::before {
   left: 0;
-  background: linear-gradient(to right, rgba(249, 250, 251, 1), rgba(249, 250, 251, 0));
+  background: linear-gradient(to right, rgba(249, 250, 251, 1) 0%, rgba(249, 250, 251, 0.8) 50%, rgba(249, 250, 251, 0) 100%);
 }
 
 .marquee-container::after {
   right: 0;
-  background: linear-gradient(to left, rgba(249, 250, 251, 1), rgba(249, 250, 251, 0));
+  background: linear-gradient(to left, rgba(249, 250, 251, 1) 0%, rgba(249, 250, 251, 0.8) 50%, rgba(249, 250, 251, 0) 100%);
 }
