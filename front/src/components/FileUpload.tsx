@@ -16,7 +16,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onUrlSubmit }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full p-6 sm:p-8 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+    <form onSubmit={handleSubmit} className="w-full p-6 sm:p-8 bg-white dark:bg-gray-950 rounded-xl border border-gray-100 dark:border-gray-900 transition-colors duration-200">
       <div className="flex flex-col items-center justify-center gap-4">
         <Link className="w-12 h-12 text-zinc-500 dark:text-zinc-400" />
         <div className="text-center">
@@ -30,7 +30,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onUrlSubmit }) => {
           placeholder="https://"
           className="w-full mt-4 p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors duration-200"
         />
-        <button type="submit" className="w-full mt-4 px-4 py-3 bg-zinc-900 dark:bg-zinc-800 text-white dark:text-gray-100 rounded-lg hover:bg-zinc-800 dark:hover:bg-zinc-700 transition-colors duration-200 font-medium shadow-sm dark:shadow-gray-950/50">
+        <button type="submit" className="w-full mt-4 px-4 py-3 bg-zinc-900 dark:bg-blue-800 text-white dark:text-gray-100 rounded-lg hover:bg-blue-800 dark:hover:bg-blue-700 transition-colors duration-200 font-medium shadow-sm dark:shadow-gray-950/50">
           Submit
         </button>
       </div>

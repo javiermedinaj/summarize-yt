@@ -1,10 +1,11 @@
 import React, { useState, useMemo } from "react";
-import { Prompt } from "../services/types";
+import { Prompt, DeepDivePrompt } from "../services/types";
 import { FaCopy, FaCheck } from "react-icons/fa";
 import { SiOpenai, SiAnthropic, SiGooglegemini } from "react-icons/si";
 
 interface PromptDisplayProps {
-  prompt: Prompt;
+  prompt?: Prompt; // Hacer opcional para compatibilidad
+  deepDivePrompts?: DeepDivePrompt[];
 }
 
 interface ParsedPrompt {
@@ -14,13 +15,28 @@ interface ParsedPrompt {
   fullText: string;
 }
 
-export const PromptDisplay: React.FC<PromptDisplayProps> = ({ prompt }) => {
+export const PromptDisplay: React.FC<PromptDisplayProps> = ({ prompt, deepDivePrompts }) => {
   const [copyStates, setCopyStates] = useState<{
     [key: string]: "idle" | "copied";
   }>({});
 
-  // Parsear los prompts del texto principal
+  // Usar deepDivePrompts si está disponible, sino parsear el prompt antiguo
   const parsedPrompts = useMemo(() => {
+    // Si tenemos los nuevos deepDivePrompts, usarlos directamente
+    if (deepDivePrompts && deepDivePrompts.length > 0) {
+      return deepDivePrompts.map(dp => ({
+        number: dp.number,
+        title: dp.title,
+        content: dp.content,
+        fullText: `${dp.title}\n\n${dp.content}`
+      }));
+    }
+
+    // Fallback: parsear el formato antiguo
+    if (!prompt || !prompt.mainPrompt) {
+      return [];
+    }
+
     const prompts: ParsedPrompt[] = [];
     const text = prompt.mainPrompt;
     
@@ -86,7 +102,7 @@ export const PromptDisplay: React.FC<PromptDisplayProps> = ({ prompt }) => {
     }
 
     return prompts.sort((a, b) => a.number - b.number);
-  }, [prompt.mainPrompt]);
+  }, [prompt?.mainPrompt, deepDivePrompts]);
 
   const copyToClipboard = async (content: string, type: string) => {
     const key = `deepdive-${type}`;
@@ -98,7 +114,7 @@ export const PromptDisplay: React.FC<PromptDisplayProps> = ({ prompt }) => {
       setTimeout(() => {
         setCopyStates((prev) => ({ ...prev, [key]: "idle" }));
       }, 2000);
-    } catch (error) {
+    } catch {
       const textArea = document.createElement("textarea");
       textArea.value = content;
       document.body.appendChild(textArea);
@@ -247,7 +263,7 @@ export const PromptDisplay: React.FC<PromptDisplayProps> = ({ prompt }) => {
   return (
     <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden transition-colors duration-200">
       <div className="bg-blue-50 dark:bg-blue-950/50 px-6 py-4 border-b border-gray-200 dark:border-gray-800">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 flex items-center transition-colors duration-200">
             <svg
               className="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400"
@@ -265,7 +281,10 @@ export const PromptDisplay: React.FC<PromptDisplayProps> = ({ prompt }) => {
             Deep Dive Prompts
           </h3>
           <button
-            onClick={() => copyToClipboard(prompt.mainPrompt, "full")}
+            onClick={() => {
+              const allText = parsedPrompts.map(p => p.fullText).join('\n\n---\n\n');
+              copyToClipboard(allText, "full");
+            }}
             className={`inline-flex items-center px-3 py-1 text-sm font-medium rounded-md transition-colors duration-200 ${
               copyStates["deepdive-full"] === "copied"
                 ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
@@ -296,7 +315,7 @@ export const PromptDisplay: React.FC<PromptDisplayProps> = ({ prompt }) => {
               className={`${colors.bg} rounded-xl border-2 ${colors.border} shadow-sm dark:shadow-gray-950/50 overflow-hidden transition-all duration-200 hover:shadow-md dark:hover:shadow-gray-900/50`}
             >
               <div className={`${colors.header} px-5 py-3 border-b ${colors.border}`}>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                   <div className="flex items-center gap-3">
                     <span className={`inline-flex items-center justify-center w-8 h-8 ${colors.text} font-bold text-sm rounded-full ${colors.bg} border-2 ${colors.border}`}>
                       {parsedPrompt.number}

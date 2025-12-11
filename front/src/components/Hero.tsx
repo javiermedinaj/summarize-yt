@@ -1,11 +1,6 @@
 import React from 'react';
 
-interface HeroProps {
-  title: string;
-  subtitle?: string;
-}
-
-export const Hero: React.FC<HeroProps> = ({ subtitle }) => {
+export const Hero: React.FC = () => {
   return (
     <div className="relative overflow-hidden bg-white dark:bg-black transition-colors duration-200">
       <div className="absolute inset-0 bg-grid-black/[0.05] dark:bg-grid-white/[0.05] bg-[size:50px_50px]" />
@@ -18,11 +13,11 @@ export const Hero: React.FC<HeroProps> = ({ subtitle }) => {
               YT-AI-RESUME
             </h1>
             
-            {subtitle && (
+            
               <p className="text-lg sm:text-xl lg:text-2xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto lg:mx-0 mb-8 sm:mb-12 leading-relaxed px-2 sm:px-0 transition-colors duration-200">
-                {subtitle}
+                Analiza cualquier video educativo y genera resúmenes inteligentes, flashcards para estudio y prompts de análisis profundo.
               </p>
-            )}
+           
             
             <div className="flex flex-wrap justify-center lg:justify-start items-center gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12">
               
@@ -63,7 +58,7 @@ export const Hero: React.FC<HeroProps> = ({ subtitle }) => {
                 <div className="text-gray-400">Options:</div>
                 <div className="text-gray-400">  --summary     Generate AI summary</div>
                 <div className="text-gray-400">  --flashcard   Create study flashcards</div>
-                <div className="text-gray-400">  --chat        Chat using ollama in local</div>
+                <div className="text-gray-400">  --prompt      Generate a custom prompt</div>
               </div>
             </div>
           </div>

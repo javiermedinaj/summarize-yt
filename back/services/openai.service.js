@@ -184,3 +184,111 @@ Escribe en español con terminología técnica apropiada. Return ONLY a valid JS
     throw new Error(`Failed to generate flashcards: ${error.message}`);
   }
 }
+
+export async function generateDeepDivePrompts(text) {
+  if (!text || text.length < 50) {
+    throw new Error("Content too short for deep dive prompts");
+  }
+
+  try {
+    const result = await openaiClient.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content: `Eres un experto en diseño de prompts educativos y análisis de contenido. Tu tarea es crear 5 prompts de "Deep Dive" que sean:
+
+**REGLA CRÍTICA: PROMPTS AUTOCONTENIDOS**
+Cada prompt DEBE incluir TODO el contexto necesario dentro de sí mismo. Cuando alguien copie el prompt a ChatGPT, Claude o Gemini, debe funcionar perfectamente SIN necesidad del contenido original.
+
+**ESTRUCTURA DE CADA PROMPT:**
+1. **Título claro** (ANÁLISIS GENERAL, ANÁLISIS CRÍTICO, etc.)
+2. **Contexto incorporado**: Resume los puntos clave del contenido dentro del prompt
+3. **Instrucciones específicas**: Qué hacer con ese contexto
+4. **Entregable esperado**: Qué formato de respuesta se espera
+
+**LOS 5 PROMPTS DEBEN SER:**
+
+1. **ANÁLISIS GENERAL**
+   - Resume el contenido en 2-3 párrafos dentro del prompt
+   - Pide análisis de puntos clave, implicaciones, y relaciones
+   - Estructura: Resumen + Preguntas específicas + Formato esperado
+
+2. **ANÁLISIS CRÍTICO**
+   - Incluye las afirmaciones principales del contenido
+   - Pide evaluación crítica desde múltiples perspectivas
+   - Solicita argumentos con ejemplos que respalden cada perspectiva
+
+3. **APLICACIÓN PRÁCTICA**
+   - Resume el tema central y conceptos clave
+   - Pide un plan de acción concreto y aplicable
+   - Incluye objetivos específicos, estrategias y métodos de evaluación
+
+4. **CONTEXTO AMPLIADO**
+   - Resume el contenido y sus temas principales
+   - Pide exploración interdisciplinaria
+   - Solicita ensayo que relacione campos de estudio
+
+5. **PENSAMIENTO CRÍTICO**
+   - Incluye el argumento filosófico/conceptual principal
+   - Plantea preguntas filosóficas o conceptuales profundas
+   - Pide reflexión sobre implicaciones y aplicaciones
+
+**FORMATO DE SALIDA REQUERIDO:**
+JSON array con 5 objetos, cada uno con:
+{
+  "number": 1-5,
+  "title": "ANÁLISIS GENERAL" | "ANÁLISIS CRÍTICO" | "APLICACIÓN PRÁCTICA" | "CONTEXTO AMPLIADO" | "PENSAMIENTO CRÍTICO",
+  "content": "El prompt completo autocontenido de 150-250 palabras que incluye contexto + instrucciones + entregable"
+}
+
+**EJEMPLO DE PROMPT AUTOCONTENIDO:**
+"Analiza el siguiente concepto presentado: [RESUMEN DEL CONTENIDO EN 2-3 LÍNEAS]. Considerando esta información, examina [INSTRUCCIÓN ESPECÍFICA]. Tu análisis debe incluir: (1) [ASPECTO 1], (2) [ASPECTO 2], y (3) [ASPECTO 3]. Entregable esperado: [FORMATO]"
+
+Escribe en español profesional. Return ONLY valid JSON, no markdown.`,
+        },
+        {
+          role: "user",
+          content: `Genera 5 prompts de Deep Dive autocontenidos basados en este contenido. Cada prompt debe incluir el contexto necesario para funcionar independientemente:\n\n${text}`,
+        },
+      ],
+      max_tokens: 2500,
+      temperature: 0.8,
+      top_p: 1,
+      model: modelName,
+    });
+
+    if (result?.error !== undefined) {
+      throw new Error(`OpenAI API Error: ${result.error.message}`);
+    }
+
+    let content = result.choices[0].message.content.trim();
+    content = content.replace(/```json\s*/g, "").replace(/```\s*$/g, "");
+
+    try {
+      const parsed = JSON.parse(content);
+      if (Array.isArray(parsed) && parsed.length === 5) {
+        return parsed;
+      } else if (Array.isArray(parsed)) {
+        console.warn(`Expected 5 prompts, got ${parsed.length}. Using what we have.`);
+        return parsed;
+      } else {
+        console.warn("Response is not an array");
+        return [];
+      }
+    } catch (parseError) {
+      console.warn("Failed to parse JSON for deep dive prompts:", parseError.message);
+      const jsonMatch = content.match(/\[[\s\S]*\]/);
+      if (jsonMatch) {
+        try {
+          return JSON.parse(jsonMatch[0]);
+        } catch (secondError) {
+          console.warn("Failed to parse extracted JSON");
+        }
+      }
+      return [];
+    }
+  } catch (error) {
+    console.error("Error in generateDeepDivePrompts:", error);
+    throw new Error(`Failed to generate deep dive prompts: ${error.message}`);
+  }
+}

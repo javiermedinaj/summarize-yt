@@ -6,9 +6,8 @@ import { ContentDisplay } from "./ContentDisplay";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { ErrorMessage } from "./ErrorMessage";
 import { extractSummary, generateFlashcards } from "../services/api";
-import { Flashcard, Prompt } from "../services/types";
+import { Flashcard, Prompt, DeepDivePrompt } from "../services/types";
 import { useState } from "react";
-import { useLanguage } from "../i18n/LanguageContext";
 
 type TabType = "summary" | "flashcards" | "prompt";
 
@@ -20,7 +19,7 @@ export const WebAppSection: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>("summary");
   const [prompt, setPrompt] = useState<Prompt | undefined>(undefined);
-  const { t } = useLanguage();
+  const [deepDivePrompts, setDeepDivePrompts] = useState<DeepDivePrompt[]>([]);
 
   const handleUrlSubmit = async (url: string) => {
     setVideoUrl(url);
@@ -32,19 +31,38 @@ export const WebAppSection: React.FC = () => {
 
     try {
       const response = await extractSummary(url);
-      // console.log('API Response:', response); console solo en desarrollo
       setSummary(response.summary);
-      setPrompt(response.prompt);
+      
+      // DEBUG temporal
+      // console.log('Response data:', {
+      //   hasDeepDivePrompts: !!response.deepDivePrompts,
+      //   promptsLength: response.deepDivePrompts?.length || 0,
+      //   totalPrompts: response.totalPrompts,
+      //   hasFlashcards: !!response.flashcards,
+      //   flashcardsLength: response.flashcards?.length || 0,
+      //   fromCache: response.fromCache
+      // });
+      
+      if (response.deepDivePrompts && response.deepDivePrompts.length > 0) {
+        setDeepDivePrompts(response.deepDivePrompts);
+      }
+      
+      if (response.prompt) {
+        setPrompt(response.prompt);
+      }
 
-      try {
-        // console.log('🔄 Generando flashcards en frontend...');
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        const flashcardsData = await generateFlashcards(response.summary);
-        // console.log('✅ Flashcards recibidas:', flashcardsData);
-        setFlashcards(flashcardsData.flashcards);
-      } catch (flashcardError) {
-        // console.error('Error generando flashcards:', flashcardError);
-        setFlashcards([]);
+      // Usar las flashcards que ya vienen en la respuesta (ya están generadas en el backend)
+      if (response.flashcards && response.flashcards.length > 0) {
+        setFlashcards(response.flashcards);
+      } else {
+        // Fallback: solo si no vienen flashcards, generarlas
+        try {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          const flashcardsData = await generateFlashcards(response.summary);
+          setFlashcards(flashcardsData.flashcards);
+        } catch {
+          setFlashcards([]);
+        }
       }
     } catch (err) {
       setError(
@@ -63,6 +81,7 @@ export const WebAppSection: React.FC = () => {
     setSummary("");
     setFlashcards([]);
     setPrompt(undefined);
+    setDeepDivePrompts([]);
     setError(null);
     setActiveTab("summary");
   };
@@ -72,14 +91,12 @@ export const WebAppSection: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-200">
-            {t.webApp.title}
+            YT-AI-RESUME
           </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto transition-colors duration-200">
-            {t.webApp.description}
-          </p>
+          
         </div>
 
-        <div className="max-w-4xl mx-auto bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-xl dark:shadow-gray-950/50 border border-gray-200 dark:border-gray-700 p-6 sm:p-8 transition-colors duration-200">
+        <div className="max-w-4xl mx-auto bg-gray-50 dark:bg-gray-950 rounded-2xl shadow-xl dark:shadow-gray-950/50 border border-gray-200 dark:border-gray-700 p-6 sm:p-8 transition-colors duration-200">
           {error && <ErrorMessage message={error} />}
 
           {!videoUrl && <FileUpload onUrlSubmit={handleUrlSubmit} />}
@@ -101,6 +118,7 @@ export const WebAppSection: React.FC = () => {
                     summary={summary}
                     flashcards={flashcards}
                     prompt={prompt}
+                    deepDivePrompts={deepDivePrompts}
                   />
                 </div>
               )}

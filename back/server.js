@@ -1,22 +1,44 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import connectDB from './config/database.js';
 import videoRouter from './routes/video.routes.js';
 import flashcardsRouter from './routes/flashcards.routes.js';
+import subtitlesRouter from './routes/subtitles.routes.js';
+import promptsRouter from './routes/prompt.routes.js';
 
 dotenv.config();
 
 const app = express();
 
+connectDB();
+
+// Configuración de CORS para producción y desarrollo
 const allowedOrigins = process.env.ALLOWED_ORIGINS 
-  ? process.env.ALLOWED_ORIGINS.split(',') 
-  : ['*'];
+  ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
+  : ['http://localhost:5173'];
 
 app.use(cors({
-    origin: process.env.NODE_ENV === 'production' ? allowedOrigins : '*',
+    origin: (origin, callback) => {
+        // Permitir requests sin origin (como mobile apps o curl)
+        if (!origin) return callback(null, true);
+        
+        // En desarrollo, permitir todo
+        if (process.env.NODE_ENV !== 'production') {
+            return callback(null, true);
+        }
+        
+        // En producción, verificar lista de orígenes permitidos
+        if (allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
+            callback(null, true);
+        } else {
+            console.warn(`🚫 CORS blocked request from origin: ${origin}`);
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: false
+    credentials: true
 }));
 
 app.use(express.json({ limit: '10mb' }));
@@ -32,6 +54,9 @@ app.get('/health', (req, res) => {
 
 app.use('/api/video', videoRouter);
 app.use('/api/flashcards', flashcardsRouter);
+app.use('/api/subtitles', subtitlesRouter);
+app.use('/api/prompts', promptsRouter);
+
 
 app.use((err, req, res, next) => {
     console.error(err.stack);

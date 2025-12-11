@@ -1,3 +1,10 @@
+export interface DeepDivePrompt {
+  number: number;
+  title: string;
+  content: string;
+  category?: string;
+}
+
 export interface Prompt {
   mainPrompt: string;
   context: {
@@ -18,6 +25,12 @@ export interface SummaryResponse {
   success: boolean;
   summary: string;
   subtitles: string;
-  prompt: Prompt;
+  deepDivePrompts: DeepDivePrompt[];
+  totalPrompts: number;
+  flashcards?: Flashcard[];
   videoId: string;
+  savedToMongo?: boolean;
+  fromCache?: boolean;
+  // Mantener compatibilidad con versión anterior
+  prompt?: Prompt;
 }

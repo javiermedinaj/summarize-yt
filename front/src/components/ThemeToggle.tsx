@@ -1,6 +1,6 @@
 import React from 'react';
-import { FaMoon, FaSun } from 'react-icons/fa';
-import { useTheme } from '../contexts/ThemeContext';
+import { FaSun, FaMoon } from 'react-icons/fa';
+import { useTheme } from '../hooks/useTheme';
 
 export const ThemeToggle: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
@@ -22,7 +22,7 @@ export const ThemeToggle: React.FC = () => {
       aria-checked={theme === 'dark'}
     >
       <span
-        className={`inline-block h-7 w-7 transform rounded-full bg-white dark:bg-yellow-400 shadow-lg transition-transform duration-300 flex items-center justify-center ${
+        className={`h-7 w-7 transform rounded-full bg-white dark:bg-yellow-400 shadow-lg transition-transform duration-300 flex items-center justify-center ${
           theme === 'dark' ? 'translate-x-8' : 'translate-x-1'
         }`}
       >

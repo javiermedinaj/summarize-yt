@@ -1,5 +1,6 @@
 import fetch from 'node-fetch';
 import { URL } from 'url';
+import Subtitle from '../models/Subtitle.js';
 
 function extractVideoId(url) {
     try {
@@ -112,6 +113,19 @@ export async function getVideoSubtitles(videoUrl) {
     }
 
     try {
+        // Verificar si ya existe en la base de datos
+        const existingSubtitle = await Subtitle.findOne({ videoId });
+        if (existingSubtitle) {
+            console.log(`📦 Subtítulos encontrados en cache para: ${videoId}`);
+            return {
+                text: existingSubtitle.content,
+                videoId: existingSubtitle.videoId,
+                fromCache: true,
+                _id: existingSubtitle._id,
+                subtitleDoc: existingSubtitle
+            };
+        }
+
         console.log(`🎥 Extrayendo subtítulos para video: ${videoId}`);
         
         const subtitles = await getSubtitlesFromYouTubeTranscript(videoUrl);
@@ -122,13 +136,45 @@ export async function getVideoSubtitles(videoUrl) {
         
         console.log(`✅ Subtítulos extraídos: ${subtitles.length} caracteres`);
         
+        // Guardar en MongoDB
+        const savedSubtitle = await Subtitle.create({
+            videoId,
+            videoUrl,
+            content: subtitles,
+            wordCount: subtitles.split(' ').length
+        });
+
+        console.log(`Subtítulos guardados en MongoDB con ID: ${savedSubtitle._id}`);
+        
         return {
             text: subtitles,
-            videoId
+            videoId,
+            fromCache: false,
+            _id: savedSubtitle._id,
+            subtitleDoc: savedSubtitle
         };
 
     } catch (error) {
         console.error('Error downloading subtitles:', error);
         throw new Error(`Failed to download subtitles: ${error.message}`);
     }
+}
+
+export async function getAllSubtitles(limit = 50) {
+    return await Subtitle.find()
+        .sort({ extractedAt: -1 })
+        .limit(limit)
+        .select('-content'); // Excluir el contenido completo para listar
+}
+
+export async function getSubtitleById(id) {
+    return await Subtitle.findById(id);
+}
+
+export async function getSubtitlesByVideoId(videoId) {
+    return await Subtitle.find({ videoId }).sort({ extractedAt: -1 });
+}
+
+export async function deleteSubtitle(id) {
+    return await Subtitle.findByIdAndDelete(id);
 }

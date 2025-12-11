@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Flashcard, Prompt } from '../services/types';
+import { Flashcard, Prompt, DeepDivePrompt } from '../services/types';
 import { PromptDisplay } from './PromptDisplay';
 import { FaDownload, FaCopy, FaFilePdf } from 'react-icons/fa';
 
@@ -10,13 +10,15 @@ interface ContentDisplayProps {
   summary?: string;
   flashcards?: Flashcard[];
   prompt?: Prompt;
+  deepDivePrompts?: DeepDivePrompt[];
 }
 
 export const ContentDisplay: React.FC<ContentDisplayProps> = ({
   activeTab,
   summary,
   flashcards,
-  prompt
+  prompt,
+  deepDivePrompts
 }) => {
   const [copyState, setCopyState] = useState<'idle' | 'copied'>('idle');
 
@@ -25,7 +27,7 @@ export const ContentDisplay: React.FC<ContentDisplayProps> = ({
       await navigator.clipboard.writeText(text);
       setCopyState('copied');
       setTimeout(() => setCopyState('idle'), 2000);
-    } catch (error) {
+    } catch {
       const textArea = document.createElement('textarea');
       textArea.value = text;
       document.body.appendChild(textArea);
@@ -210,15 +212,13 @@ export const ContentDisplay: React.FC<ContentDisplayProps> = ({
         if (summary) {
           return (
             <div className="bg-white dark:bg-black rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden transition-colors duration-200">
-              <div className="bg-green-50 dark:bg-green-950/50 px-6 py-4 border-b border-gray-200 dark:border-gray-800">
-                <div className="flex items-center justify-between">
+              <div className="bg-green-50 dark:bg-green-900 px-6 py-4 border-b border-gray-200 dark:border-gray-800">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                   <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 flex items-center transition-colors duration-200">
-                    <svg className="w-5 h-5 mr-2 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    Resumen Ejecutivo
+                    
+                    Resumen
                   </h3>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <button
                       onClick={() => handleCopy(summary)}
                       className={`inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-md transition-colors duration-200 ${
@@ -279,17 +279,15 @@ export const ContentDisplay: React.FC<ContentDisplayProps> = ({
           return (
             <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden transition-colors duration-200">
               <div className="bg-purple-50 dark:bg-purple-950/50 px-6 py-4 border-b border-gray-200 dark:border-gray-800">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                   <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 flex items-center transition-colors duration-200">
-                    <svg className="w-5 h-5 mr-2 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                    </svg>
-                    Tarjetas de Estudio
+                
+                    Flashcards
                     <span className="ml-2 px-2 py-1 text-xs bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full">
                       {flashcards.length} tarjetas
                     </span>
                   </h3>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <button
                       onClick={() => handleCopy(flashcardsText)}
                       className={`inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-md transition-colors duration-200 ${
@@ -364,7 +362,9 @@ export const ContentDisplay: React.FC<ContentDisplayProps> = ({
         break;
 
       case 'prompt':
-        if (prompt) {
+        if (deepDivePrompts && deepDivePrompts.length > 0) {
+          return <PromptDisplay deepDivePrompts={deepDivePrompts} />;
+        } else if (prompt) {
           return <PromptDisplay prompt={prompt} />;
         }
         break;
