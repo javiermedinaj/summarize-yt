@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 import { URL } from 'url';
 import puppeteer from 'puppeteer-core';
-import chromium from '@sparticuz/chromium';
+import chromium from 'chrome-aws-lambda';
 import Subtitle from '../models/Subtitle.js';
 
 function extractVideoId(url) {
@@ -119,18 +119,35 @@ async function getSubtitlesWithPuppeteer(videoUrl) {
         console.log(`🤖 Usando Puppeteer para: ${transcriptUrl}`);
         
         // Detectar si estamos en entorno local o serverless
-        const isLocal = process.env.NODE_ENV !== 'production' && !process.env.AWS_LAMBDA_FUNCTION_NAME;
+        const isLocal = process.env.NODE_ENV !== 'production' && !process.env.AWS_LAMBDA_FUNCTION_NAME && !process.env.VERCEL;
         
-        // Iniciar Puppeteer optimizado para serverless (Vercel, AWS Lambda, etc.)
-        browser = await puppeteer.launch({
-            args: isLocal ? chromium.args : [...chromium.args, '--single-process'],
-            defaultViewport: chromium.defaultViewport,
-            executablePath: isLocal 
-                ? process.env.CHROME_EXECUTABLE_PATH || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
-                : await chromium.executablePath(),
-            headless: chromium.headless,
-            ignoreHTTPSErrors: true,
-        });
+        console.log(`🔧 Entorno detectado: ${isLocal ? 'Local' : 'Serverless (Vercel/Lambda)'}`);
+        
+        // Iniciar Puppeteer con configuración apropiada
+        if (isLocal) {
+            // Configuración para desarrollo local
+            browser = await puppeteer.launch({
+                headless: 'new',
+                executablePath: process.env.CHROME_EXECUTABLE_PATH || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+                args: [
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox',
+                    '--disable-dev-shm-usage',
+                    '--disable-gpu'
+                ]
+            });
+        } else {
+            // Configuración para Vercel/serverless usando chrome-aws-lambda
+            browser = await chromium.puppeteer.launch({
+                args: chromium.args,
+                defaultViewport: chromium.defaultViewport,
+                executablePath: await chromium.executablePath,
+                headless: chromium.headless,
+                ignoreHTTPSErrors: true,
+            });
+        }
+        
+        console.log(`✅ Navegador lanzado exitosamente`);
 
         const page = await browser.newPage();
         
