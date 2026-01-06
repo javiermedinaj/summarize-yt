@@ -119,9 +119,16 @@ async function getSubtitlesWithPuppeteer(videoUrl) {
         console.log(`🤖 Usando Puppeteer para: ${transcriptUrl}`);
         
         // Detectar si estamos en entorno local o serverless
-        const isLocal = process.env.NODE_ENV !== 'production' && !process.env.AWS_LAMBDA_FUNCTION_NAME && !process.env.VERCEL;
+        // Render.com detecta por RENDER variable de entorno
+        const isServerless = process.env.NODE_ENV === 'production' 
+            || process.env.AWS_LAMBDA_FUNCTION_NAME 
+            || process.env.VERCEL
+            || process.env.RENDER;
         
-        console.log(`🔧 Entorno detectado: ${isLocal ? 'Local' : 'Serverless (Vercel/Lambda)'}`);
+        const isLocal = !isServerless;
+        
+        console.log(`🔧 Entorno detectado: ${isLocal ? 'Local' : 'Serverless (Render/Vercel/Lambda)'}`);
+        console.log(`📊 Variables de entorno: NODE_ENV=${process.env.NODE_ENV}, RENDER=${process.env.RENDER}, VERCEL=${process.env.VERCEL}`);
         
         // Iniciar Puppeteer con configuración apropiada
         if (isLocal) {
@@ -137,7 +144,8 @@ async function getSubtitlesWithPuppeteer(videoUrl) {
                 ]
             });
         } else {
-            // Configuración para Vercel/serverless usando chrome-aws-lambda
+            // Configuración para Render/Vercel/serverless usando chrome-aws-lambda
+            console.log(`🚀 Usando chrome-aws-lambda para entorno serverless`);
             browser = await chromium.puppeteer.launch({
                 args: chromium.args,
                 defaultViewport: chromium.defaultViewport,
