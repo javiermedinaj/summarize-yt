@@ -1,8 +1,18 @@
 import fetch from 'node-fetch';
 import { URL } from 'url';
-import puppeteer from 'puppeteer-core';
 import chromium from 'chrome-aws-lambda';
 import Subtitle from '../models/Subtitle.js';
+
+// puppeteer-core solo para desarrollo local
+let puppeteerLocal;
+try {
+    // En producción (Render), esto puede fallar y está bien
+    const puppeteerModule = await import('puppeteer-core');
+    puppeteerLocal = puppeteerModule.default;
+} catch (error) {
+    // En Render, usaremos chromium.puppeteer directamente
+    puppeteerLocal = null;
+}
 
 function extractVideoId(url) {
     try {
@@ -131,9 +141,10 @@ async function getSubtitlesWithPuppeteer(videoUrl) {
         console.log(`📊 Variables de entorno: NODE_ENV=${process.env.NODE_ENV}, RENDER=${process.env.RENDER}, VERCEL=${process.env.VERCEL}`);
         
         // Iniciar Puppeteer con configuración apropiada
-        if (isLocal) {
+        if (isLocal && puppeteerLocal) {
             // Configuración para desarrollo local
-            browser = await puppeteer.launch({
+            console.log(`🖥️ Usando Chrome local para desarrollo`);
+            browser = await puppeteerLocal.launch({
                 headless: 'new',
                 executablePath: process.env.CHROME_EXECUTABLE_PATH || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
                 args: [
