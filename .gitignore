@@ -8,6 +8,8 @@
 .env.development.local
 .env.test.local
 .env.production.local
+.env.docker
+.env.*.local
 
 # Logs
 logs
@@ -83,3 +85,5 @@ Desktop.ini
 
 local.settings.json
 .env*
+
+docs_prompt

@@ -128,20 +128,41 @@ async function getSubtitlesWithPuppeteer(videoUrl) {
         
         console.log(`🤖 Usando Puppeteer para: ${transcriptUrl}`);
         
-        // Detectar si estamos en entorno local o serverless
-        // Render.com detecta por RENDER variable de entorno
-        const isServerless = process.env.NODE_ENV === 'production' 
+        // Detectar si estamos en entorno local, Docker o serverless
+        const isDocker = process.env.PUPPETEER_EXECUTABLE_PATH === '/usr/bin/chromium';
+        const isRender = process.env.RENDER === 'true';
+        const isServerless = (process.env.NODE_ENV === 'production' && !isDocker)
             || process.env.AWS_LAMBDA_FUNCTION_NAME 
-            || process.env.VERCEL
-            || process.env.RENDER;
+            || process.env.VERCEL;
         
-        const isLocal = !isServerless;
+        const isLocal = !isServerless && !isDocker && !isRender;
         
-        console.log(`🔧 Entorno detectado: ${isLocal ? 'Local' : 'Serverless (Render/Vercel/Lambda)'}`);
-        console.log(`📊 Variables de entorno: NODE_ENV=${process.env.NODE_ENV}, RENDER=${process.env.RENDER}, VERCEL=${process.env.VERCEL}`);
+        console.log(`🔧 Entorno detectado: ${isDocker ? 'Docker' : isLocal ? 'Local' : 'Serverless (Render/Vercel/Lambda)'}`);
+        console.log(`📊 Variables de entorno: NODE_ENV=${process.env.NODE_ENV}, RENDER=${process.env.RENDER}, DOCKER=${isDocker}`);
         
         // Iniciar Puppeteer con configuración apropiada
-        if (isLocal && puppeteerLocal) {
+        if (isDocker || process.env.PUPPETEER_EXECUTABLE_PATH) {
+            // Configuración para Docker o entorno con Chromium instalado
+            console.log(`🐳 Usando Chromium en Docker/Linux`);
+            
+            // Usar puppeteerLocal si está disponible, sino usar chromium.puppeteer
+            const puppeteer = puppeteerLocal || chromium.puppeteer;
+            
+            if (!puppeteer) {
+                throw new Error('Puppeteer no disponible en este entorno');
+            }
+            
+            browser = await puppeteer.launch({
+                headless: 'new',
+                executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium',
+                args: [
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox',
+                    '--disable-dev-shm-usage',
+                    '--disable-gpu'
+                ]
+            });
+        } else if (isLocal && puppeteerLocal) {
             // Configuración para desarrollo local
             console.log(`🖥️ Usando Chrome local para desarrollo`);
             browser = await puppeteerLocal.launch({
