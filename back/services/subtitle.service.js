@@ -2,8 +2,6 @@ import fetch from 'node-fetch';
 import { URL } from 'url';
 import Subtitle from '../models/Subtitle.js';
 
-const TRANSCRIPT_API_KEY = process.env.TRANSCRIPT_API_KEY;
-
 function extractVideoId(url) {
     try {
         const urlObj = new URL(url);
@@ -18,6 +16,8 @@ function extractVideoId(url) {
 
 // Usar TranscriptAPI.com
 async function getTranscriptFromAPI(videoUrl) {
+    const TRANSCRIPT_API_KEY = process.env.TRANSCRIPT_API_KEY;
+    
     if (!TRANSCRIPT_API_KEY) {
         throw new Error('❌ TRANSCRIPT_API_KEY no está configurada. Por favor, agrega tu API key de TranscriptAPI.com en el archivo .env');
     }
